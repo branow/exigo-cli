@@ -26,11 +26,13 @@ func NewKeyringStore(streams *iostreams.IOStreams, fallbackPath string) *Keyring
 	return &KeyringStore{streams: streams, fallback: NewPlaintextStore(fallbackPath)}
 }
 
-// Get returns the stored credentials for profile.
+// Get returns the stored credentials for profile. A profile absent from
+// the keychain is also looked up in the plaintext fallback — its entry may
+// have been written there while the keychain was unavailable.
 func (s *KeyringStore) Get(profile string) (Credentials, error) {
 	value, err := keyring.Get(keyringService, profile)
 	if errors.Is(err, keyring.ErrNotFound) {
-		return Credentials{}, ErrNotFound
+		return s.fallback.Get(profile)
 	}
 	if err != nil {
 		s.warnFallback(err)
@@ -52,11 +54,12 @@ func (s *KeyringStore) Set(profile string, creds Credentials) error {
 	return nil
 }
 
-// Delete removes the stored credentials for profile.
+// Delete removes the stored credentials for profile, from the plaintext
+// fallback when the keychain has no entry (see Get).
 func (s *KeyringStore) Delete(profile string) error {
 	err := keyring.Delete(keyringService, profile)
 	if errors.Is(err, keyring.ErrNotFound) {
-		return ErrNotFound
+		return s.fallback.Delete(profile)
 	}
 	if err != nil {
 		s.warnFallback(err)

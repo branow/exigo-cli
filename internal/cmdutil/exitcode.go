@@ -35,29 +35,35 @@ func ExitCode(err error) int {
 	if errors.As(err, &validationErr) {
 		return ExitValidation
 	}
-	var fault *exigoapi.Fault
-	if errors.As(err, &fault) {
-		return exitCodeForFault(fault)
+	var httpErr *exigoapi.HTTPError
+	if errors.As(err, &httpErr) {
+		return exitCodeForHTTP(httpErr)
 	}
 	var businessErr *exigoapi.BusinessError
 	if errors.As(err, &businessErr) {
 		return exitCodeForBusinessError(businessErr)
 	}
-	var unavailable *exigoapi.Unavailable
+	var unavailable *exigoapi.UnavailableError
 	if errors.As(err, &unavailable) {
 		return ExitRateLimited
+	}
+	var unknownOp *exigoapi.UnknownOperationError
+	var unsupportedOp *exigoapi.UnsupportedOperationError
+	if errors.As(err, &unknownOp) || errors.As(err, &unsupportedOp) {
+		return ExitValidation
 	}
 	return ExitError
 }
 
-// exitCodeForFault classifies a SOAP envelope-level fault. The API's exact
-// fault vocabulary is unconfirmed (see docs/DESIGN.md), so this is a
-// best-effort keyword match against the one documented real-world fault
-// pattern (auth/credential/IP-allowlist failures), not a verified
-// taxonomy.
-func exitCodeForFault(f *exigoapi.Fault) int {
-	if mentionsAny(f.Code+" "+f.String, "auth", "credential", "login", "whitelist", "ip address") {
+// exitCodeForHTTP classifies a non-2xx REST response by its status code.
+func exitCodeForHTTP(e *exigoapi.HTTPError) int {
+	switch e.StatusCode {
+	case 401, 403:
 		return ExitAuth
+	case 404:
+		return ExitNotFound
+	case 429:
+		return ExitRateLimited
 	}
 	return ExitError
 }

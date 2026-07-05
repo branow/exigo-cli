@@ -46,14 +46,14 @@ func (c *Config) CurrentProfile(flagOverride string) string {
 	return defaultProfileName
 }
 
-// SetProfile stores profile as the named profile's settings and makes it
-// the active profile.
+// SetProfile stores profile as the named profile's settings. It never
+// changes which profile is active — activation is a separate, explicit
+// step via SwitchProfile.
 func (c *Config) SetProfile(name string, profile Profile) {
 	if c.Profiles == nil {
 		c.Profiles = map[string]Profile{}
 	}
 	c.Profiles[name] = profile
-	c.CurrentProfileName = name
 }
 
 // SwitchProfile makes name the active profile without changing its stored

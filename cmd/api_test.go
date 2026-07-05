@@ -1,6 +1,7 @@
 package cmd_test
 
 import (
+	"encoding/json"
 	"io"
 	"net/http"
 	"net/http/httptest"
@@ -11,100 +12,97 @@ import (
 	"exigo-cli/internal/cmdutil"
 )
 
-func soapActionOperation(r *http.Request) string {
-	action := strings.Trim(r.Header.Get("SOAPAction"), `"`)
-	idx := strings.LastIndex(action, "/")
-	if idx == -1 {
-		return action
-	}
-	return action[idx+1:]
+// jsonHandler responds with body and records each request's method, path,
+// query, and JSON payload for assertions.
+type jsonHandler struct {
+	body string
+
+	requests  int
+	gotMethod string
+	gotPath   string
+	gotQuery  map[string][]string
+	gotBody   map[string]any
 }
 
-func soapSuccessEnvelope(operation string, fields map[string]string) string {
-	var b strings.Builder
-	b.WriteString(`<?xml version="1.0" encoding="utf-8"?>`)
-	b.WriteString(`<soap:Envelope xmlns:soap="http://schemas.xmlsoap.org/soap/envelope/"><soap:Body>`)
-	b.WriteString("<" + operation + `Response xmlns="http://api.exigo.com/">`)
-	b.WriteString("<" + operation + "Result>")
-	for k, v := range fields {
-		b.WriteString("<" + k + ">" + v + "</" + k + ">")
+func (h *jsonHandler) ServeHTTP(w http.ResponseWriter, r *http.Request) {
+	h.requests++
+	h.gotMethod = r.Method
+	h.gotPath = r.URL.Path
+	h.gotQuery = r.URL.Query()
+	if data, _ := io.ReadAll(r.Body); len(data) > 0 {
+		json.Unmarshal(data, &h.gotBody)
 	}
-	b.WriteString("<Errors />")
-	b.WriteString("</" + operation + "Result>")
-	b.WriteString("</" + operation + "Response>")
-	b.WriteString("</soap:Body></soap:Envelope>")
-	return b.String()
-}
-
-func soapFaultEnvelope(code, message string) string {
-	return `<?xml version="1.0" encoding="utf-8"?>` +
-		`<soap:Envelope xmlns:soap="http://schemas.xmlsoap.org/soap/envelope/"><soap:Body><soap:Fault>` +
-		`<faultcode>` + code + `</faultcode><faultstring>` + message + `</faultstring>` +
-		`</soap:Fault></soap:Body></soap:Envelope>`
+	w.Header().Set("Content-Type", "application/json")
+	w.Write([]byte(h.body))
 }
 
 func TestAPIHappyPath(t *testing.T) {
-	server := httptest.NewServer(http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
-		op := soapActionOperation(r)
-		if op != "GetCustomer" {
-			t.Errorf("got operation %q, want GetCustomer", op)
-		}
-		w.Write([]byte(soapSuccessEnvelope(op, map[string]string{"CustomerID": "12345", "FirstName": "Jane"})))
-	}))
+	handler := &jsonHandler{body: `{"customers": [{"customerID": 12345, "firstName": "Jane"}], "recordCount": 1}`}
+	server := httptest.NewServer(handler)
 	defer server.Close()
 
 	f, out, _ := newTestFactory(t, server.URL)
 	root := cmd.NewRootCmd(f)
-	root.SetArgs([]string{"api", "GetCustomer", "-f", "CustomerID=12345"})
+	root.SetArgs([]string{"api", "GetCustomers", "-f", "customerID=12345"})
 	if err := root.Execute(); err != nil {
 		t.Fatalf("Execute: %v", err)
 	}
 
-	if !strings.Contains(out.String(), `"CustomerID": "12345"`) {
-		t.Errorf("got output %q, want it to contain CustomerID", out.String())
+	if handler.gotMethod != http.MethodGet || handler.gotPath != "/customers" {
+		t.Errorf("got %s %s, want GET /customers", handler.gotMethod, handler.gotPath)
 	}
-	if !strings.Contains(out.String(), `"FirstName": "Jane"`) {
-		t.Errorf("got output %q, want it to contain FirstName", out.String())
+	if got := handler.gotQuery["customerID"]; len(got) != 1 || got[0] != "12345" {
+		t.Errorf("got query customerID=%v, want [12345]", got)
+	}
+	if !strings.Contains(out.String(), `"firstName": "Jane"`) {
+		t.Errorf("got output %q, want it to contain firstName", out.String())
+	}
+	if !strings.Contains(out.String(), `"recordCount": 1`) {
+		t.Errorf("got output %q, want it to contain recordCount", out.String())
 	}
 }
 
-func TestAPIFieldSentAsRequestElement(t *testing.T) {
-	var gotBody string
-	server := httptest.NewServer(http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
-		body, _ := io.ReadAll(r.Body)
-		gotBody = string(body)
-		w.Write([]byte(soapSuccessEnvelope("GetCustomer", nil)))
-	}))
+func TestAPIFieldValuesAreTyped(t *testing.T) {
+	handler := &jsonHandler{body: `{"customerID": 67890, "result": {"status": 0}}`}
+	server := httptest.NewServer(handler)
 	defer server.Close()
 
 	f, _, _ := newTestFactory(t, server.URL)
 	root := cmd.NewRootCmd(f)
-	root.SetArgs([]string{"api", "GetCustomer", "-f", "CustomerID=12345"})
+	root.SetArgs([]string{"api", "CreateCustomer",
+		"-f", "firstName=Jane",
+		"-f", "customerType=1",
+		"-f", "mainAddressVerified=true",
+	})
 	if err := root.Execute(); err != nil {
 		t.Fatalf("Execute: %v", err)
 	}
-	if !strings.Contains(gotBody, "<CustomerID>12345</CustomerID>") {
-		t.Errorf("request body missing field element: %s", gotBody)
+
+	if handler.gotMethod != http.MethodPost || handler.gotPath != "/customers" {
+		t.Errorf("got %s %s, want POST /customers", handler.gotMethod, handler.gotPath)
+	}
+	if got := handler.gotBody["firstName"]; got != "Jane" {
+		t.Errorf("got body firstName=%v (%T), want the string Jane", got, got)
+	}
+	if got := handler.gotBody["customerType"]; got != float64(1) {
+		t.Errorf("got body customerType=%v (%T), want the JSON number 1", got, got)
+	}
+	if got := handler.gotBody["mainAddressVerified"]; got != true {
+		t.Errorf("got body mainAddressVerified=%v (%T), want the JSON boolean true", got, got)
 	}
 }
 
-func TestAPIBusinessErrorMapsToGenericExitCode(t *testing.T) {
-	server := httptest.NewServer(http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
-		w.Write([]byte(`<?xml version="1.0" encoding="utf-8"?>
-<soap:Envelope xmlns:soap="http://schemas.xmlsoap.org/soap/envelope/"><soap:Body>
-<CreateCustomerResponse xmlns="http://api.exigo.com/"><CreateCustomerResult>
-<Errors><string>Email already in use</string></Errors>
-</CreateCustomerResult></CreateCustomerResponse>
-</soap:Body></soap:Envelope>`))
-	}))
+func TestAPIBusinessErrorPrintsPartialResultAndMapsToGenericExitCode(t *testing.T) {
+	handler := &jsonHandler{body: `{"customerID": 0, "result": {"status": 1, "errors": ["Email already in use"]}}`}
+	server := httptest.NewServer(handler)
 	defer server.Close()
 
 	f, out, _ := newTestFactory(t, server.URL)
 	root := cmd.NewRootCmd(f)
-	root.SetArgs([]string{"api", "CreateCustomer", "-f", "Email=jane@example.com"})
+	root.SetArgs([]string{"api", "CreateCustomer", "-f", "email=jane@example.com"})
 	err := root.Execute()
 	if err == nil {
-		t.Fatal("expected an error for a business Errors[] response")
+		t.Fatal("expected an error for a business-errors response")
 	}
 	if got := cmdutil.ExitCode(err); got != cmdutil.ExitError {
 		t.Errorf("got exit code %d, want %d", got, cmdutil.ExitError)
@@ -114,19 +112,19 @@ func TestAPIBusinessErrorMapsToGenericExitCode(t *testing.T) {
 	}
 }
 
-func TestAPIFaultMapsToAuthExitCode(t *testing.T) {
+func TestAPIUnauthorizedMapsToAuthExitCode(t *testing.T) {
 	server := httptest.NewServer(http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
-		w.WriteHeader(http.StatusInternalServerError)
-		w.Write([]byte(soapFaultEnvelope("soap:Client", "Authentication failed: invalid credentials")))
+		w.WriteHeader(http.StatusUnauthorized)
+		w.Write([]byte(`{"message": "Invalid credentials"}`))
 	}))
 	defer server.Close()
 
 	f, _, _ := newTestFactory(t, server.URL)
 	root := cmd.NewRootCmd(f)
-	root.SetArgs([]string{"api", "GetCustomer"})
+	root.SetArgs([]string{"api", "GetCustomers"})
 	err := root.Execute()
 	if err == nil {
-		t.Fatal("expected an error for a SOAP fault")
+		t.Fatal("expected an error for an HTTP 401 response")
 	}
 	if got := cmdutil.ExitCode(err); got != cmdutil.ExitAuth {
 		t.Errorf("got exit code %d, want %d", got, cmdutil.ExitAuth)
@@ -136,12 +134,70 @@ func TestAPIFaultMapsToAuthExitCode(t *testing.T) {
 func TestAPINotLoggedIn(t *testing.T) {
 	f, _, _ := newTestFactory(t, "")
 	root := cmd.NewRootCmd(f)
-	root.SetArgs([]string{"api", "GetCustomer"})
+	root.SetArgs([]string{"api", "GetCustomers"})
 	err := root.Execute()
 	if err == nil {
 		t.Fatal("expected an error when no credentials are configured")
 	}
 	if got := cmdutil.ExitCode(err); got != cmdutil.ExitAuth {
 		t.Errorf("got exit code %d, want %d", got, cmdutil.ExitAuth)
+	}
+}
+
+func TestAPIUnknownOperationBeatsNotLoggedIn(t *testing.T) {
+	f, _, _ := newTestFactory(t, "")
+	root := cmd.NewRootCmd(f)
+	root.SetArgs([]string{"api", "NoSuchOp"})
+	err := root.Execute()
+	if err == nil {
+		t.Fatal("expected an error for an unknown operation")
+	}
+	if got := cmdutil.ExitCode(err); got != cmdutil.ExitValidation {
+		t.Errorf("got exit code %d, want %d (a typo must not be masked by auth state)", got, cmdutil.ExitValidation)
+	}
+}
+
+func TestAPIListPrintsOperationsWithoutCredentials(t *testing.T) {
+	f, out, _ := newTestFactory(t, "")
+	root := cmd.NewRootCmd(f)
+	root.SetArgs([]string{"api", "--list"})
+	if err := root.Execute(); err != nil {
+		t.Fatalf("Execute: %v", err)
+	}
+	if !strings.Contains(out.String(), "GetCustomers") {
+		t.Errorf("expected the operation list to contain GetCustomers, got %q", out.String()[:200])
+	}
+}
+
+func TestAPIRejectsInvalidOutputFlag(t *testing.T) {
+	f, _, _ := newTestFactory(t, "")
+	root := cmd.NewRootCmd(f)
+	root.SetArgs([]string{"-o", "yaml", "api", "--list"})
+	err := root.Execute()
+	if err == nil {
+		t.Fatal("expected a validation error for -o yaml")
+	}
+	if got := cmdutil.ExitCode(err); got != cmdutil.ExitValidation {
+		t.Errorf("got exit code %d, want %d", got, cmdutil.ExitValidation)
+	}
+}
+
+func TestAPIUnknownOperationMapsToValidationExitCode(t *testing.T) {
+	handler := &jsonHandler{body: `{}`}
+	server := httptest.NewServer(handler)
+	defer server.Close()
+
+	f, _, _ := newTestFactory(t, server.URL)
+	root := cmd.NewRootCmd(f)
+	root.SetArgs([]string{"api", "GetCustomerz"})
+	err := root.Execute()
+	if err == nil {
+		t.Fatal("expected an error for an operation absent from the catalog")
+	}
+	if got := cmdutil.ExitCode(err); got != cmdutil.ExitValidation {
+		t.Errorf("got exit code %d, want %d", got, cmdutil.ExitValidation)
+	}
+	if handler.requests != 0 {
+		t.Errorf("server was hit %d times, want 0 for an uncatalogued operation", handler.requests)
 	}
 }

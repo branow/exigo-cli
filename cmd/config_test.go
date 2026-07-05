@@ -5,6 +5,7 @@ import (
 	"testing"
 
 	"exigo-cli/cmd"
+	"exigo-cli/internal/cmdutil"
 )
 
 func TestConfigSetGetRoundTrip(t *testing.T) {
@@ -23,6 +24,36 @@ func TestConfigSetGetRoundTrip(t *testing.T) {
 	}
 	if got := out.String(); got != "https://api.exigo.com\n" {
 		t.Errorf("got %q, want %q", got, "https://api.exigo.com\n")
+	}
+}
+
+func TestConfigSetDoesNotSwitchActiveProfile(t *testing.T) {
+	f, _, _ := newTestFactory(t, "")
+
+	root := cmd.NewRootCmd(f)
+	root.SetArgs([]string{"config", "set", "--profile", "sandbox", "output", "json"})
+	if err := root.Execute(); err != nil {
+		t.Fatalf("set: %v", err)
+	}
+	if got := f.Config.CurrentProfile(""); got != "default" {
+		t.Errorf("config set switched the active profile to %q", got)
+	}
+	if got := f.Config.OutputFormat("", "sandbox"); got != "json" {
+		t.Errorf("got output %q for profile sandbox, want json", got)
+	}
+}
+
+func TestConfigSetRejectsInvalidOutputFormat(t *testing.T) {
+	f, _, _ := newTestFactory(t, "")
+
+	root := cmd.NewRootCmd(f)
+	root.SetArgs([]string{"config", "set", "output", "yaml"})
+	err := root.Execute()
+	if err == nil {
+		t.Fatal("expected a validation error for an unsupported output format")
+	}
+	if got := cmdutil.ExitCode(err); got != cmdutil.ExitValidation {
+		t.Errorf("got exit code %d, want %d", got, cmdutil.ExitValidation)
 	}
 }
 
