@@ -31,7 +31,9 @@ go build -o exigo .
 
 ```sh
 # Log in (prompts for login name, password, company, and the REST base URL,
-# defaulting to https://<company>-api.exigo.com/3.0)
+# defaulting to https://<company>-api.exigo.com/3.0). The credentials are
+# verified with a cheap read-only API call before being stored — pass
+# --no-verify to skip that (e.g. offline).
 exigo auth login
 
 # Or non-interactively, e.g. for CI

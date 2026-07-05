@@ -2,8 +2,11 @@ package cmd
 
 import (
 	"bufio"
+	"context"
+	"errors"
 	"fmt"
 	"io"
+	"net/http"
 	"strings"
 
 	"github.com/spf13/cobra"
@@ -20,7 +23,7 @@ import (
 // is not a dead end for CI use.
 func newAuthLoginCmd(f *cmdutil.Factory) *cobra.Command {
 	var loginName, companyCode, baseURL string
-	var passwordStdin bool
+	var passwordStdin, noVerify bool
 
 	cmd := &cobra.Command{
 		Use:   "login",
@@ -34,7 +37,7 @@ func newAuthLoginCmd(f *cmdutil.Factory) *cobra.Command {
   # Log in under a named profile against a sandbox REST endpoint
   exigo auth login --profile sandbox --login-name dev --company SANDBOX --base-url https://sandboxapi6.exigo.com/3.0 --password-stdin`,
 		RunE: func(cmd *cobra.Command, args []string) error {
-			return runAuthLogin(f, loginName, companyCode, baseURL, passwordStdin)
+			return runAuthLogin(cmd.Context(), f, loginName, companyCode, baseURL, passwordStdin, noVerify)
 		},
 	}
 
@@ -42,10 +45,11 @@ func newAuthLoginCmd(f *cmdutil.Factory) *cobra.Command {
 	cmd.Flags().StringVar(&companyCode, "company", "", "Exigo company (tenant) code")
 	cmd.Flags().StringVar(&baseURL, "base-url", "", "Exigo REST base URL (default https://<company>-api.exigo.com/3.0)")
 	cmd.Flags().BoolVar(&passwordStdin, "password-stdin", false, "read the password from stdin")
+	cmd.Flags().BoolVar(&noVerify, "no-verify", false, "store the credentials without verifying them against the API")
 	return cmd
 }
 
-func runAuthLogin(f *cmdutil.Factory, loginName, companyCode, baseURL string, passwordStdin bool) error {
+func runAuthLogin(ctx context.Context, f *cmdutil.Factory, loginName, companyCode, baseURL string, passwordStdin, noVerify bool) error {
 	profile := f.ActiveProfile()
 	reader := bufio.NewReader(f.IOStreams.In)
 
@@ -67,6 +71,12 @@ func runAuthLogin(f *cmdutil.Factory, loginName, companyCode, baseURL string, pa
 	}
 
 	creds := credentials.Credentials{LoginName: loginName, Password: password, Company: companyCode}
+	warnUnversionedBaseURL(f.IOStreams, baseURL)
+	if !noVerify {
+		if err := verifyLogin(ctx, f, baseURL, creds); err != nil {
+			return err
+		}
+	}
 	if err := f.CredentialsStore.Set(profile, creds); err != nil {
 		return err
 	}
@@ -118,7 +128,7 @@ func resolvePromptValue(f *cmdutil.Factory, reader *bufio.Reader, flagValue, lab
 // host is a documented, sensible default.
 func resolveBaseURL(f *cmdutil.Factory, reader *bufio.Reader, flagValue, companyCode string) (string, error) {
 	if flagValue != "" {
-		return flagValue, nil
+		return flagValue, validateBaseURL(flagValue)
 	}
 	defaultURL := exigoapi.DefaultEndpoint(companyCode)
 	if !f.IOStreams.CanPrompt() {
@@ -130,7 +140,7 @@ func resolveBaseURL(f *cmdutil.Factory, reader *bufio.Reader, flagValue, company
 		return "", err
 	}
 	if value := strings.TrimSpace(line); value != "" {
-		return value, nil
+		return value, validateBaseURL(value)
 	}
 	return defaultURL, nil
 }
@@ -165,4 +175,40 @@ func nonEmptyPassword(raw string) (string, error) {
 		return "", &cmdutil.ValidationError{Message: "password is required"}
 	}
 	return password, nil
+}
+
+// verifyOperation is the read-only operation used to prove credentials
+// work: parameterless, and warehouses are a core module every tenant has.
+const verifyOperation = "GetWarehouses"
+
+// verifyLogin checks the credentials and base URL against the API before
+// they are stored, so a typo'd password or a wrong endpoint fails at
+// login rather than on the first real call. Only definitive rejections
+// block the login — 401/403 (bad credentials) and 404 (the base URL does
+// not serve the API). Anything else the probe cannot interpret (a tenant
+// where the probe operation itself errors, an unreachable host, a 5xx) is
+// inconclusive: the credentials are stored with a warning, since blocking
+// on it would lock out valid logins.
+func verifyLogin(ctx context.Context, f *cmdutil.Factory, baseURL string, creds credentials.Credentials) error {
+	client := exigoapi.New(baseURL, creds)
+	_, err := client.Call(ctx, verifyOperation, nil)
+	if err == nil {
+		return nil
+	}
+	// A business-level error still proves the API accepted the credentials.
+	var businessErr *exigoapi.BusinessError
+	if errors.As(err, &businessErr) {
+		return nil
+	}
+	var httpErr *exigoapi.HTTPError
+	if errors.As(err, &httpErr) {
+		switch httpErr.StatusCode {
+		case http.StatusUnauthorized, http.StatusForbidden:
+			return fmt.Errorf("login verification failed (use --no-verify to store the credentials anyway): %w", err)
+		case http.StatusNotFound:
+			return fmt.Errorf("login verification failed: %w — the base URL does not serve the Exigo REST API (expected e.g. https://acme-api.exigo.com/3.0)", err)
+		}
+	}
+	fmt.Fprintf(f.IOStreams.ErrOut, "warning: could not verify the credentials (%v); storing them anyway\n", err)
+	return nil
 }
