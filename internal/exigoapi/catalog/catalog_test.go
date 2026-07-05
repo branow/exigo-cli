@@ -5,7 +5,7 @@ import (
 	"regexp"
 	"testing"
 
-	"exigo-cli/internal/exigoapi/catalog"
+	"github.com/branow/exigo-cli/internal/exigoapi/catalog"
 )
 
 func TestLookupMatchesCaseInsensitively(t *testing.T) {

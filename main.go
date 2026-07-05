@@ -5,8 +5,8 @@ import (
 	"fmt"
 	"os"
 
-	"exigo-cli/cmd"
-	"exigo-cli/internal/cmdutil"
+	"github.com/branow/exigo-cli/cmd"
+	"github.com/branow/exigo-cli/internal/cmdutil"
 )
 
 func main() {

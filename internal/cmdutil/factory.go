@@ -5,10 +5,10 @@
 package cmdutil
 
 import (
-	"exigo-cli/internal/config"
-	"exigo-cli/internal/credentials"
-	"exigo-cli/internal/exigoapi"
-	"exigo-cli/internal/iostreams"
+	"github.com/branow/exigo-cli/internal/config"
+	"github.com/branow/exigo-cli/internal/credentials"
+	"github.com/branow/exigo-cli/internal/exigoapi"
+	"github.com/branow/exigo-cli/internal/iostreams"
 )
 
 // Factory bundles the dependencies commands need, plus the resolved

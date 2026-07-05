@@ -4,7 +4,7 @@ import (
 	"bytes"
 	"testing"
 
-	"exigo-cli/internal/output"
+	"github.com/branow/exigo-cli/internal/output"
 )
 
 func TestWriteTableAlignsColumns(t *testing.T) {

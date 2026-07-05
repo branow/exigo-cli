@@ -7,7 +7,7 @@ import (
 	"runtime"
 	"testing"
 
-	"exigo-cli/internal/credentials"
+	"github.com/branow/exigo-cli/internal/credentials"
 )
 
 func statMode(path string) (os.FileMode, error) {

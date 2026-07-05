@@ -4,7 +4,7 @@ import (
 	"path/filepath"
 	"testing"
 
-	"exigo-cli/internal/config"
+	"github.com/branow/exigo-cli/internal/config"
 )
 
 func TestCurrentProfilePrecedence(t *testing.T) {

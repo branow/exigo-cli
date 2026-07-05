@@ -6,8 +6,8 @@ import (
 
 	"github.com/spf13/cobra"
 
-	"exigo-cli/internal/cmdutil"
-	"exigo-cli/internal/credentials"
+	"github.com/branow/exigo-cli/internal/cmdutil"
+	"github.com/branow/exigo-cli/internal/credentials"
 )
 
 // newAuthLogoutCmd builds "exigo auth logout", removing stored credentials

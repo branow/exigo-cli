@@ -10,8 +10,8 @@ import (
 	"sync/atomic"
 	"testing"
 
-	"exigo-cli/internal/credentials"
-	"exigo-cli/internal/exigoapi"
+	"github.com/branow/exigo-cli/internal/credentials"
+	"github.com/branow/exigo-cli/internal/exigoapi"
 )
 
 func testCreds() credentials.Credentials {

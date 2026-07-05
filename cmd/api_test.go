@@ -8,8 +8,8 @@ import (
 	"strings"
 	"testing"
 
-	"exigo-cli/cmd"
-	"exigo-cli/internal/cmdutil"
+	"github.com/branow/exigo-cli/cmd"
+	"github.com/branow/exigo-cli/internal/cmdutil"
 )
 
 // jsonHandler responds with body and records each request's method, path,

@@ -6,7 +6,7 @@ import (
 
 	"gopkg.in/yaml.v3"
 
-	"exigo-cli/internal/config"
+	"github.com/branow/exigo-cli/internal/config"
 )
 
 // PlaintextStore persists credentials in a 0600 YAML file, used as a

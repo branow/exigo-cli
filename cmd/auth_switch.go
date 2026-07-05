@@ -5,7 +5,7 @@ import (
 
 	"github.com/spf13/cobra"
 
-	"exigo-cli/internal/cmdutil"
+	"github.com/branow/exigo-cli/internal/cmdutil"
 )
 
 // newAuthSwitchCmd builds "exigo auth switch", changing the active profile
