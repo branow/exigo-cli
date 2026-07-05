@@ -9,17 +9,20 @@ import (
 
 const maxAttempts = 4
 
-// shouldRetry reports whether a request attempt should be retried: any
-// network error (including the timeouts research associates with
-// IP-allowlist rejections) or a 5xx response. ASMX SOAP faults are
-// typically also carried on a 5xx status, so a transient fault gets
-// retried here at the transport layer; a completed 2xx response is never
-// retried even if its body reports business-level Errors[].
-func shouldRetry(resp *http.Response, err error) bool {
-	if err != nil {
-		return true
+// shouldRetry reports whether a request attempt should be retried. GET is
+// safe to retry on any network error or retryable status. Mutating methods
+// only retry on 429 — the server explicitly refused the request before
+// processing it — because a network error or 5xx may have already applied
+// the change (e.g. double-creating an order). A completed 2xx response is
+// never retried, even if its body reports business-level errors.
+func shouldRetry(method string, resp *http.Response, err error) bool {
+	if method == http.MethodGet {
+		if err != nil {
+			return true
+		}
+		return isRetryableStatus(resp.StatusCode)
 	}
-	return isRetryableStatus(resp.StatusCode)
+	return err == nil && resp.StatusCode == http.StatusTooManyRequests
 }
 
 // isRetryableStatus reports whether status looks transient rather than a

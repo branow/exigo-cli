@@ -47,7 +47,7 @@ func newConfigSetCmd(f *cmdutil.Factory) *cobra.Command {
 		Short: "Set a configuration value for the active profile",
 		Args:  cobra.ExactArgs(2),
 		Example: `  exigo config set output json
-  exigo config set base-url https://api.exigo.com/3.0/ExigoApi.asmx
+  exigo config set base-url https://acme-api.exigo.com/3.0
   exigo config set --profile sandbox company SANDBOX`,
 		RunE: func(cmd *cobra.Command, args []string) error {
 			return runConfigSet(f, args[0], args[1])
@@ -89,11 +89,20 @@ func configValue(f *cmdutil.Factory, profile, key string) (string, error) {
 	}
 }
 
+// validOutputFormat reports whether value names a supported -o/--output
+// format.
+func validOutputFormat(value string) bool {
+	return value == "table" || value == "json"
+}
+
 func runConfigSet(f *cmdutil.Factory, key, value string) error {
 	profile := f.ActiveProfile()
 	p := f.Config.Profiles[profile]
 	switch key {
 	case keyOutput:
+		if !validOutputFormat(value) {
+			return &cmdutil.ValidationError{Message: fmt.Sprintf("invalid output format %q (expected table or json)", value)}
+		}
 		p.Output = value
 	case keyBaseURL:
 		p.BaseURL = value

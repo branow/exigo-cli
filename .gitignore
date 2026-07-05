@@ -1,4 +1,10 @@
+# Local research and crawl artifacts — the docs crawl, the generated SOAP
+# schema reference, and the scripts that produce them. Only the distilled
+# internal/exigoapi/catalog/rest-catalog.json is committed.
 /research/
+/scripts/
+/api-catalog/
+/docs/exigo-api-catalog.md
 /.tmp/
 *.local
 

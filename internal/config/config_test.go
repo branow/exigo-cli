@@ -72,6 +72,14 @@ func TestOutputFormatPrecedenceAndDefault(t *testing.T) {
 	}
 }
 
+func TestSetProfileDoesNotSwitchActiveProfile(t *testing.T) {
+	c := config.New()
+	c.SetProfile("work", config.Profile{BaseURL: "https://example.com"})
+	if got := c.CurrentProfile(""); got != "default" {
+		t.Errorf("SetProfile changed the active profile to %q", got)
+	}
+}
+
 func TestSwitchProfileRequiresExistingProfile(t *testing.T) {
 	c := config.New()
 	if err := c.SwitchProfile("missing"); err == nil {
@@ -104,6 +112,9 @@ func TestLoadSaveRoundTrip(t *testing.T) {
 		Company: "SANDBOX",
 		Output:  "json",
 	})
+	if err := loaded.SwitchProfile("sandbox"); err != nil {
+		t.Fatalf("SwitchProfile: %v", err)
+	}
 	if err := loaded.Save(); err != nil {
 		t.Fatalf("Save: %v", err)
 	}

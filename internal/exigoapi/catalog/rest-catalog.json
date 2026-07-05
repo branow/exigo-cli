@@ -1,0 +1,4094 @@
+{
+  "AddBankAccountType": {
+    "method": "POST",
+    "path": "/settings/bankaccounttype",
+    "body": [
+      "description"
+    ],
+    "response": [
+      "bankAccountTyId",
+      "result"
+    ]
+  },
+  "AddPartyGuests": {
+    "method": "POST",
+    "path": "/party/guest",
+    "body": [
+      "partyID",
+      "guestIDs"
+    ],
+    "response": [
+      "result"
+    ]
+  },
+  "AddProductsToCategory": {
+    "method": "POST",
+    "path": "/webcategory/product",
+    "body": [
+      "webID",
+      "categoryID",
+      "itemCodes"
+    ],
+    "response": [
+      "categoryID",
+      "webID",
+      "result"
+    ]
+  },
+  "AdjustInventory": {
+    "method": "PUT",
+    "path": "/warehouse/inventory",
+    "body": [
+      "warehouseID",
+      "itemCode",
+      "quantity",
+      "notes"
+    ],
+    "response": [
+      "result"
+    ]
+  },
+  "AppendCustomerNotes": {
+    "method": "PATCH",
+    "path": "/customers/notes",
+    "body": [
+      "customerID",
+      "customerKey"
+    ],
+    "response": [
+      "customerID",
+      "customerKey",
+      "result"
+    ]
+  },
+  "AuthenticateCustomer": {
+    "method": "POST",
+    "path": "/customers/authenticate",
+    "body": [
+      "loginName",
+      "password"
+    ],
+    "response": [
+      "customerID",
+      "firstName",
+      "lastName",
+      "customerKey",
+      "result"
+    ]
+  },
+  "AuthenticateUser": {
+    "method": "POST",
+    "path": "/user/authenticate",
+    "body": [
+      "loginName",
+      "password"
+    ],
+    "response": [
+      "firstName",
+      "lastName",
+      "result"
+    ]
+  },
+  "AuthorizeOnlyCreditCardToken": {
+    "unavailable": true
+  },
+  "AuthorizeOnlyCreditCardTokenOnFile": {
+    "unavailable": true
+  },
+  "AutoOrderSkipNextShipment": {
+    "method": "POST",
+    "path": "/autoorder/skip",
+    "body": [
+      "autoOrderId"
+    ],
+    "response": [
+      "nextRunDate",
+      "result"
+    ]
+  },
+  "CalculateOrder": {
+    "method": "POST",
+    "path": "/orders/calculate",
+    "body": [
+      "currencyCode",
+      "warehouseID",
+      "shipMethodID",
+      "priceType",
+      "address1",
+      "address2",
+      "address3",
+      "city",
+      "state",
+      "zip",
+      "country",
+      "county",
+      "customerID",
+      "details",
+      "returnShipMethods",
+      "partyID",
+      "customerKey",
+      "orderType"
+    ],
+    "response": [
+      "total",
+      "subTotal",
+      "taxTotal",
+      "shippingTotal",
+      "discountTotal",
+      "discountPercent",
+      "weightTotal",
+      "businessVolumeTotal",
+      "commissionableVolumeTotal",
+      "other1Total",
+      "other2Total",
+      "other3Total",
+      "other4Total",
+      "other5Total",
+      "other6Total",
+      "other7Total",
+      "other8Total",
+      "other9Total",
+      "other10Total",
+      "other11",
+      "other12",
+      "other13",
+      "other14",
+      "other15",
+      "other16",
+      "other17",
+      "other18",
+      "other19",
+      "other20",
+      "shippingTax",
+      "orderTax",
+      "fedTaxTotal",
+      "stateTaxTotal",
+      "details",
+      "shipMethods",
+      "warnings",
+      "trace",
+      "handlingFeeTotal",
+      "autoOrderId",
+      "replacementOrderId",
+      "declineCount",
+      "isRMA",
+      "backOrderFromId",
+      "isCommissionable",
+      "flag1",
+      "flag2",
+      "flag3",
+      "returnCategoryId",
+      "replacementCategoryId",
+      "result"
+    ]
+  },
+  "ChangeAutoOrderStatus": {
+    "method": "POST",
+    "path": "/autoorder/status",
+    "body": [
+      "autoOrderID",
+      "autoOrderStatus"
+    ],
+    "response": [
+      "result"
+    ]
+  },
+  "ChangeOrderStatus": {
+    "method": "POST",
+    "path": "/orders/status",
+    "body": [
+      "orderStatus",
+      "orderKey"
+    ],
+    "response": [
+      "result"
+    ]
+  },
+  "ChangeOrderStatusBatch": {
+    "method": "POST",
+    "path": "/orders/statusbatch",
+    "body": [
+      "details",
+      "orderStatusTy"
+    ],
+    "response": [
+      "result"
+    ]
+  },
+  "ChargeCreditCardToken": {
+    "method": "POST",
+    "path": "/payment/charge/token",
+    "body": [
+      "creditCardToken",
+      "billingName",
+      "billingAddress",
+      "billingAddress2",
+      "billingCity",
+      "billingZip",
+      "expirationMonth",
+      "expirationYear",
+      "orderKey",
+      "phone",
+      "email"
+    ],
+    "response": [
+      "amount",
+      "authorizationCode",
+      "paymentID",
+      "message",
+      "displayMessage",
+      "merchantTransactionKey",
+      "result"
+    ]
+  },
+  "ChargeCreditCardTokenOnFile": {
+    "method": "POST",
+    "path": "/payment/charge/tokenonfile",
+    "body": [
+      "creditCardAccountType",
+      "orderKey"
+    ],
+    "response": [
+      "amount",
+      "authorizationCode",
+      "paymentID",
+      "message",
+      "displayMessage",
+      "merchantTransactionKey",
+      "result"
+    ]
+  },
+  "ChargeGroupOrderCreditCardToken": {
+    "method": "POST",
+    "path": "/payment/charge/tokengroup",
+    "body": [
+      "creditCardToken",
+      "billingName",
+      "billingAddress",
+      "billingAddress2",
+      "billingCity",
+      "billingZip",
+      "cvcCode",
+      "issueNumber",
+      "orders",
+      "clientIPAddress",
+      "masterOrderKey"
+    ],
+    "response": [
+      "amount",
+      "authorizationCode",
+      "payments",
+      "result"
+    ]
+  },
+  "ChargePriorAuthorization": {
+    "unavailable": true
+  },
+  "ChargeWalletAccount": {
+    "method": "POST",
+    "path": "/payment/charge/wallet",
+    "body": [
+      "walletAccountNumber",
+      "walletTy",
+      "memo",
+      "orderKey",
+      "otherData1",
+      "otherData2",
+      "otherData3",
+      "otherData4",
+      "otherData5",
+      "otherData6",
+      "otherData7",
+      "otherData8",
+      "otherData9",
+      "otherData10"
+    ],
+    "response": [
+      "amount",
+      "authorizationCode",
+      "paymentID",
+      "message",
+      "displayMessage",
+      "merchantTransactionKey",
+      "result"
+    ]
+  },
+  "ChargeWalletAccountOnFile": {
+    "method": "POST",
+    "path": "/payment/charge/walletonfile",
+    "body": [
+      "walletAccountType",
+      "memo",
+      "orderKey",
+      "otherData1",
+      "otherData2",
+      "otherData3",
+      "otherData4",
+      "otherData5",
+      "otherData6",
+      "otherData7",
+      "otherData8",
+      "otherData9",
+      "otherData10"
+    ],
+    "response": [
+      "amount",
+      "authorizationCode",
+      "paymentID",
+      "message",
+      "displayMessage",
+      "merchantTransactionKey",
+      "result"
+    ]
+  },
+  "CreateAdminWhitelist": {
+    "method": "POST",
+    "path": "/whitelist/admin",
+    "body": [
+      "description",
+      "maxIP"
+    ],
+    "response": [
+      "iPRangeID",
+      "result"
+    ]
+  },
+  "CreateApiWhitelist": {
+    "method": "POST",
+    "path": "/whitelist/api",
+    "body": [
+      "description",
+      "minIP",
+      "maxIP"
+    ],
+    "response": [
+      "iPRangeID",
+      "result"
+    ]
+  },
+  "CreateAutoOrder": {
+    "method": "POST",
+    "path": "/autoorder",
+    "body": [
+      "frequency",
+      "startDate",
+      "stopDate",
+      "specificDayInterval",
+      "currencyCode",
+      "warehouseID",
+      "shipMethodID",
+      "priceType",
+      "paymentType",
+      "processType",
+      "firstName",
+      "lastName",
+      "company",
+      "address1",
+      "address2",
+      "address3",
+      "city",
+      "zip",
+      "county",
+      "email",
+      "phone",
+      "notes",
+      "overwriteExistingAutoOrder",
+      "existingAutoOrderID",
+      "details",
+      "customerKey",
+      "customFrequencyTy"
+    ],
+    "response": [
+      "autoOrderID",
+      "description",
+      "total",
+      "subTotal",
+      "taxTotal",
+      "shippingTotal",
+      "discountTotal",
+      "weightTotal",
+      "businessVolumeTotal",
+      "commissionableVolumeTotal",
+      "other1Total",
+      "other2Total",
+      "other3Total",
+      "other4Total",
+      "other5Total",
+      "other6Total",
+      "other7Total",
+      "other8Total",
+      "other9Total",
+      "other10Total",
+      "shippingTax",
+      "orderTax",
+      "details",
+      "result"
+    ]
+  },
+  "CreateBill": {
+    "method": "POST",
+    "path": "/bill",
+    "body": [
+      "customerID",
+      "currencyCode",
+      "isOtherIncome",
+      "dueDate",
+      "amount",
+      "reference",
+      "notes",
+      "billStatusTypeID",
+      "payableTypeIDOverride",
+      "customerKey",
+      "taxablePeriodTy",
+      "taxablePeriodID",
+      "warehouseID"
+    ],
+    "response": [
+      "billID",
+      "result"
+    ]
+  },
+  "CreateBillPayout": {
+    "method": "POST",
+    "path": "/payout/createpayout",
+    "body": [
+      "startDate",
+      "endDate",
+      "currencyCode",
+      "countryCode",
+      "payableType",
+      "paymentCardType",
+      "reference",
+      "batchDescription",
+      "useBatchPayout",
+      "bankAccountID",
+      "fee",
+      "feeDescription",
+      "startCheckNumber",
+      "customerID",
+      "customerKey",
+      "paymentDate",
+      "minimumAmount",
+      "maximumAmount",
+      "groupPaymentByVendor"
+    ],
+    "response": [
+      "startCheckNumber",
+      "endCheckNumber",
+      "startPaymentID",
+      "endPaymentID",
+      "payoutTotal",
+      "result"
+    ]
+  },
+  "CreateBills": {
+    "method": "POST",
+    "path": "/bills",
+    "body": [
+      "bills"
+    ],
+    "response": [
+      "bills",
+      "result"
+    ]
+  },
+  "CreateCalendarItem": {
+    "method": "POST",
+    "path": "/calendar/item",
+    "body": [
+      "userID",
+      "calendarID",
+      "calendarItemType",
+      "calendarItemStatusType",
+      "calendarItemPriorityType",
+      "subject",
+      "location",
+      "notes",
+      "startDate",
+      "endDate",
+      "timeZone",
+      "address1",
+      "address2",
+      "city",
+      "postalCode",
+      "contactInfo",
+      "contactPhone",
+      "contactPhoneType",
+      "contactEmail",
+      "eventHost",
+      "specialGuests",
+      "eventFlyer",
+      "eventCostInfo",
+      "eventConferenceCallOrWebinar",
+      "eventRegistrationInfo",
+      "eventTags",
+      "isShared"
+    ],
+    "response": [
+      "calendarID",
+      "calendarItemID",
+      "result"
+    ]
+  },
+  "CreateCustomer": {
+    "method": "POST",
+    "path": "/customers",
+    "body": [
+      "firstName",
+      "lastName",
+      "company",
+      "customerType",
+      "customerStatus",
+      "email",
+      "phone",
+      "mainAddress1",
+      "mainCity",
+      "mainState",
+      "mainZip",
+      "mailState",
+      "mailCountry",
+      "otherState",
+      "otherCountry",
+      "taxIDType",
+      "middleName",
+      "nameSuffix",
+      "binaryPlacementPreference",
+      "useBinaryHoldingTank",
+      "mainAddressVerified",
+      "mailAddressVerified",
+      "otherAddressVerified",
+      "payableTy"
+    ],
+    "response": [
+      "customerID",
+      "customerKey",
+      "result"
+    ]
+  },
+  "CreateCustomerBalanceAdjustment": {
+    "method": "POST",
+    "path": "/customers/balances/adjustment",
+    "body": [
+      "customerID",
+      "transactionDate",
+      "amount",
+      "currencyCode",
+      "notes",
+      "customerKey"
+    ],
+    "response": [
+      "transactionID",
+      "result"
+    ]
+  },
+  "CreateCustomerExtended": {
+    "method": "POST",
+    "path": "/customers/extended",
+    "body": [
+      "customerID",
+      "extendedGroupID",
+      "customerKey"
+    ],
+    "response": [
+      "customerExtendedID",
+      "result"
+    ]
+  },
+  "CreateCustomerFile": {
+    "method": "POST",
+    "path": "/file",
+    "body": [
+      "customerID",
+      "fileName",
+      "fileData",
+      "overwriteExistingFile",
+      "customerKey",
+      "folderName",
+      "parentFolderID"
+    ],
+    "response": [
+      "folderID",
+      "fileID",
+      "result"
+    ]
+  },
+  "CreateCustomerFolder": {
+    "method": "POST",
+    "path": "/folder",
+    "body": [],
+    "response": [
+      "folderID",
+      "result"
+    ]
+  },
+  "CreateCustomerInquiry": {
+    "method": "POST",
+    "path": "/customers/inquiry",
+    "body": [
+      "customerID",
+      "detail",
+      "description",
+      "assignToUser",
+      "customerInquiryStatusID",
+      "customerInquiryCategoryID",
+      "customerKey",
+      "parentID"
+    ],
+    "response": [
+      "newCustomerHistoryID",
+      "result"
+    ]
+  },
+  "CreateCustomerLead": {
+    "method": "POST",
+    "path": "/customerlead",
+    "body": [
+      "customerID",
+      "firstName",
+      "lastName",
+      "middleName",
+      "company",
+      "phone",
+      "phone2",
+      "mobilePhone",
+      "fax",
+      "email",
+      "address1",
+      "address2",
+      "city",
+      "zip",
+      "birthDate",
+      "notes",
+      "customerKey"
+    ],
+    "response": [
+      "customerLeadID",
+      "result"
+    ]
+  },
+  "CreateCustomerWallItem": {
+    "method": "POST",
+    "path": "/customers/wall",
+    "body": [
+      "customerID",
+      "text",
+      "field1",
+      "field2",
+      "field3",
+      "customerKey"
+    ],
+    "response": [
+      "wallItemID",
+      "customerID",
+      "customerKey",
+      "result"
+    ]
+  },
+  "CreateDestination": {
+    "method": "POST",
+    "path": "/destination",
+    "body": [],
+    "response": [
+      "destinationID",
+      "name",
+      "result"
+    ]
+  },
+  "CreateExpectedBankWire": {
+    "method": "POST",
+    "path": "/payment/wire",
+    "body": [
+      "paymentDate",
+      "amount",
+      "bankName",
+      "nameOnAccount",
+      "memo",
+      "orderKey"
+    ],
+    "response": [
+      "expectedPaymentID",
+      "result"
+    ]
+  },
+  "CreateExpectedPayment": {
+    "method": "POST",
+    "path": "/payment/expectedpayment",
+    "body": [
+      "paymentDate",
+      "amount",
+      "orderKey"
+    ],
+    "response": [
+      "expectedPaymentID",
+      "result"
+    ]
+  },
+  "CreateExtendedDbEntity": {
+    "method": "POST",
+    "path": "/extendeddb",
+    "body": [
+      "entityName",
+      "entitySetName",
+      "schemaName",
+      "isLog",
+      "maxLogDays",
+      "logDateField",
+      "navigations",
+      "properties"
+    ],
+    "response": [
+      "entity",
+      "result"
+    ]
+  },
+  "CreateExtendedDbSchema": {
+    "method": "POST",
+    "path": "/extendeddb/schema",
+    "body": [
+      "schemaName"
+    ],
+    "response": [
+      "result"
+    ]
+  },
+  "CreateGuest": {
+    "method": "POST",
+    "path": "/guest",
+    "body": [
+      "hostID",
+      "partyID",
+      "customerID",
+      "firstName",
+      "lastName",
+      "company",
+      "guestStatus",
+      "address1",
+      "state",
+      "country",
+      "email",
+      "customerKey"
+    ],
+    "response": [
+      "guestID",
+      "result"
+    ]
+  },
+  "CreateItem": {
+    "method": "POST",
+    "path": "/item",
+    "body": [
+      "itemCode",
+      "description",
+      "weight",
+      "notes",
+      "availableInAllCountryRegions",
+      "taxedInAllCountryRegions",
+      "availableInAllWarehouses",
+      "isVirtual",
+      "itemTypeID",
+      "isSubscriptionUpdate",
+      "isPointIncrement",
+      "otherCheck1",
+      "otherCheck2",
+      "otherCheck3",
+      "otherCheck4",
+      "otherCheck5",
+      "field1",
+      "field2",
+      "field3",
+      "field4",
+      "field5",
+      "field6",
+      "field7",
+      "field8",
+      "field9",
+      "field10",
+      "hideFromSearch",
+      "isGroupMaster",
+      "suppressGroupMaster"
+    ],
+    "response": [
+      "itemID",
+      "itemCode",
+      "result"
+    ]
+  },
+  "CreateOrder": {
+    "method": "POST",
+    "path": "/orders",
+    "body": [
+      "customerID",
+      "orderStatus",
+      "orderDate",
+      "currencyCode",
+      "warehouseID",
+      "shipMethodID",
+      "priceType",
+      "firstName",
+      "lastName",
+      "company",
+      "address1",
+      "address2",
+      "address3",
+      "city",
+      "zip",
+      "county",
+      "email",
+      "phone",
+      "notes",
+      "other11",
+      "other12",
+      "other13",
+      "other14",
+      "other15",
+      "other16",
+      "other17",
+      "other18",
+      "other19",
+      "other20",
+      "orderType",
+      "transferVolumeToID",
+      "returnOrderID",
+      "overwriteExistingOrder",
+      "existingOrderID",
+      "partyID",
+      "details",
+      "suppressPackSlipPrice",
+      "transferVolumeToKey",
+      "returnOrderKey",
+      "existingOrderKey",
+      "customerKey",
+      "referralID"
+    ],
+    "response": [
+      "orderID",
+      "total",
+      "subTotal",
+      "taxTotal",
+      "shippingTotal",
+      "discountTotal",
+      "weightTotal",
+      "businessVolumeTotal",
+      "commissionableVolumeTotal",
+      "other1Total",
+      "other2Total",
+      "other3Total",
+      "other4Total",
+      "other5Total",
+      "other6Total",
+      "other7Total",
+      "other8Total",
+      "other9Total",
+      "other10Total",
+      "shippingTax",
+      "orderTax",
+      "handlingFeeTotal",
+      "details",
+      "warnings",
+      "orderKey",
+      "referralID",
+      "result"
+    ]
+  },
+  "CreateOrderImport": {
+    "method": "POST",
+    "path": "/orders/import",
+    "body": [
+      "customerID",
+      "firstName",
+      "lastName",
+      "company",
+      "phone",
+      "email",
+      "shipMethodID",
+      "address1",
+      "address2",
+      "address3",
+      "city",
+      "state",
+      "zip",
+      "country",
+      "county",
+      "notes",
+      "warehouseID",
+      "currencyCode",
+      "shippingStateTax",
+      "shippingFedTax",
+      "shippingCountyLocalTax",
+      "shippingCountyTax",
+      "shippingCityLocalTax",
+      "shippingCityTax",
+      "shipping",
+      "priceType",
+      "orderStatus",
+      "orderDate",
+      "other11",
+      "other12",
+      "other13",
+      "other14",
+      "other15",
+      "other16",
+      "other17",
+      "other18",
+      "other19",
+      "other20",
+      "orderType",
+      "orderDetails",
+      "partyID",
+      "manualOrderKey",
+      "returnOrderKey",
+      "customerKey",
+      "overwriteExistingOrder",
+      "existingOrderID",
+      "existingOrderKey",
+      "isCommissionable",
+      "handlingFee",
+      "preserveOrderCreateDate",
+      "parentOrderID"
+    ],
+    "response": [
+      "orderID",
+      "orderKey",
+      "detailIDs",
+      "result"
+    ]
+  },
+  "CreateParty": {
+    "method": "POST",
+    "path": "/party",
+    "body": [
+      "partyType",
+      "partyStatusType",
+      "hostID",
+      "distributorID",
+      "startDate",
+      "closeDate",
+      "description",
+      "eventStart",
+      "eventEnd",
+      "languageID",
+      "information",
+      "bookingPartyID",
+      "field1",
+      "field2",
+      "field3",
+      "field4",
+      "field5",
+      "timeZoneID",
+      "virtualMeetingLink",
+      "partyShoppingUrl",
+      "partyExternalID"
+    ],
+    "response": [
+      "partyID",
+      "result"
+    ]
+  },
+  "CreatePayment": {
+    "method": "POST",
+    "path": "/payment",
+    "body": [
+      "paymentDate",
+      "amount",
+      "orderKey"
+    ],
+    "response": [
+      "paymentID",
+      "message",
+      "displayMessage",
+      "merchantTransactionKey",
+      "result"
+    ]
+  },
+  "CreatePaymentCheck": {
+    "method": "POST",
+    "path": "/payment/check",
+    "body": [
+      "paymentDate",
+      "amount",
+      "orderKey",
+      "payeeName"
+    ],
+    "response": [
+      "paymentID",
+      "message",
+      "displayMessage",
+      "merchantTransactionKey",
+      "result"
+    ]
+  },
+  "CreatePaymentCreditCard": {
+    "method": "POST",
+    "path": "/payment/creditcard",
+    "body": [
+      "orderID",
+      "paymentDate",
+      "amount",
+      "creditCardNumber",
+      "expirationMonth",
+      "expirationYear",
+      "billingName",
+      "billingAddress",
+      "billingAddress2",
+      "billingCity",
+      "billingZip",
+      "authorizationCode",
+      "memo",
+      "orderKey",
+      "merchantTransactionKey"
+    ],
+    "response": [
+      "paymentID",
+      "message",
+      "displayMessage",
+      "merchantTransactionKey",
+      "result"
+    ]
+  },
+  "CreatePaymentPointAccount": {
+    "method": "POST",
+    "path": "/payment/pointaccount",
+    "body": [
+      "pointAccountID",
+      "paymentDate",
+      "amount",
+      "orderKey"
+    ],
+    "response": [
+      "paymentID",
+      "message",
+      "displayMessage",
+      "merchantTransactionKey",
+      "result"
+    ]
+  },
+  "CreatePaymentWallet": {
+    "method": "POST",
+    "path": "/payment/wallet",
+    "body": [
+      "paymentDate",
+      "amount",
+      "walletAccount",
+      "authorizationCode",
+      "memo",
+      "billingName",
+      "orderKey"
+    ],
+    "response": [
+      "paymentID",
+      "message",
+      "displayMessage",
+      "merchantTransactionKey",
+      "result"
+    ]
+  },
+  "CreatePointTransaction": {
+    "method": "POST",
+    "path": "/point",
+    "body": [
+      "pointAccountID",
+      "customerID",
+      "amount",
+      "reference",
+      "customerKey",
+      "pointTransactionTy"
+    ],
+    "response": [
+      "transactionID",
+      "result"
+    ]
+  },
+  "CreateRelease": {
+    "method": "POST",
+    "path": "/resourceset/release",
+    "body": [],
+    "response": [
+      "resourceSetID",
+      "releaseDate",
+      "version",
+      "result"
+    ]
+  },
+  "CreateResourceSet": {
+    "method": "POST",
+    "path": "/resourceset",
+    "body": [],
+    "response": [
+      "resourceSetID",
+      "className",
+      "description",
+      "namespace",
+      "subscriptionKey",
+      "result"
+    ]
+  },
+  "CreateResourceSetBannerItem": {
+    "method": "POST",
+    "path": "/resourceitem/banner",
+    "body": [],
+    "response": [
+      "resourceSetID",
+      "resourceName",
+      "cultureCode",
+      "result"
+    ]
+  },
+  "CreateResourceSetBooleanItem": {
+    "method": "POST",
+    "path": "/resourceitem/bool",
+    "body": [],
+    "response": [
+      "resourceSetID",
+      "resourceName",
+      "cultureCode",
+      "result"
+    ]
+  },
+  "CreateResourceSetCarouselItem": {
+    "method": "POST",
+    "path": "/resourceitem/carousel",
+    "body": [],
+    "response": [
+      "resourceSetID",
+      "resourceName",
+      "cultureCode",
+      "result"
+    ]
+  },
+  "CreateResourceSetCulture": {
+    "method": "POST",
+    "path": "/resourceset/culture",
+    "body": [],
+    "response": [
+      "resourceSetID",
+      "cultureCode",
+      "description",
+      "result"
+    ]
+  },
+  "CreateResourceSetDataSetItem": {
+    "method": "POST",
+    "path": "/resourceitem/dataset",
+    "body": [],
+    "response": [
+      "resourceSetID",
+      "resourceName",
+      "cultureCode",
+      "result"
+    ]
+  },
+  "CreateResourceSetDateItem": {
+    "method": "POST",
+    "path": "/resourceitem/date",
+    "body": [],
+    "response": [
+      "resourceSetID",
+      "resourceName",
+      "cultureCode",
+      "result"
+    ]
+  },
+  "CreateResourceSetDecimalItem": {
+    "method": "POST",
+    "path": "/resourceitem/decimal",
+    "body": [],
+    "response": [
+      "resourceSetID",
+      "resourceName",
+      "cultureCode",
+      "result"
+    ]
+  },
+  "CreateResourceSetDropDownItem": {
+    "method": "POST",
+    "path": "/resourceitem/dropdown",
+    "body": [],
+    "response": [
+      "resourceSetID",
+      "resourceName",
+      "cultureCode",
+      "result"
+    ]
+  },
+  "CreateResourceSetEnvironment": {
+    "method": "POST",
+    "path": "/resourceset/environment",
+    "body": [],
+    "response": [
+      "resourceSetID",
+      "environmentCode",
+      "description",
+      "version",
+      "scheduledVersion",
+      "scheduledVersionDate",
+      "result"
+    ]
+  },
+  "CreateResourceSetGroup": {
+    "method": "POST",
+    "path": "/resourceset/group",
+    "body": [],
+    "response": [
+      "resourceSetID",
+      "resourceGroupID",
+      "decription",
+      "result"
+    ]
+  },
+  "CreateResourceSetImageItem": {
+    "method": "POST",
+    "path": "/resourceitem/image",
+    "body": [],
+    "response": [
+      "resourceSetID",
+      "resourceName",
+      "cultureCode",
+      "result"
+    ]
+  },
+  "CreateResourceSetIntItem": {
+    "method": "POST",
+    "path": "/resourceitem/int",
+    "body": [],
+    "response": [
+      "resourceSetID",
+      "resourceName",
+      "cultureCode",
+      "result"
+    ]
+  },
+  "CreateResourceSetTextItem": {
+    "method": "POST",
+    "path": "/resourceitem/text",
+    "body": [],
+    "response": [
+      "resourceSetID",
+      "resourceName",
+      "cultureCode",
+      "result"
+    ]
+  },
+  "CreateResourceSetWidgetItem": {
+    "method": "POST",
+    "path": "/resourceitem/widget",
+    "body": [],
+    "response": [
+      "resourceSetID",
+      "resourceName",
+      "cultureCode",
+      "result"
+    ]
+  },
+  "CreateSilentLoginCipher": {
+    "method": "GET",
+    "path": "/customers/createsilentlogincipher",
+    "query": [
+      "silentLoginKey",
+      "customerID",
+      "customerKey",
+      "userID",
+      "route"
+    ],
+    "response": [
+      "silentLoginCipher",
+      "result"
+    ]
+  },
+  "CreateTableFilterSettings": {
+    "unavailable": true
+  },
+  "CreateWarehouse": {
+    "method": "POST",
+    "path": "/warehouse",
+    "body": [
+      "description",
+      "address1",
+      "address2",
+      "city",
+      "zip",
+      "currencies"
+    ],
+    "response": [
+      "warehouse",
+      "result"
+    ]
+  },
+  "CreateWebCategory": {
+    "method": "POST",
+    "path": "/webcategory",
+    "body": [
+      "webID",
+      "parentID",
+      "description"
+    ],
+    "response": [
+      "categoryID",
+      "webID",
+      "result"
+    ]
+  },
+  "DebitBankAccount": {
+    "method": "POST",
+    "path": "/payment/charge/bank",
+    "body": [
+      "bankAccountNumber",
+      "bankRoutingNumber",
+      "bankName",
+      "bankAccountType",
+      "checkNumber",
+      "nameOnAccount",
+      "billingAddress",
+      "billingAddress2",
+      "billingCity",
+      "billingZip",
+      "maxAmount",
+      "orderKey"
+    ],
+    "response": [
+      "amount",
+      "authorizationCode",
+      "paymentID",
+      "message",
+      "displayMessage",
+      "merchantTransactionKey",
+      "result"
+    ]
+  },
+  "DebitBankAccountOnFile": {
+    "method": "POST",
+    "path": "/payment/charge/bankonfile",
+    "body": [
+      "orderID"
+    ],
+    "response": [
+      "amount",
+      "authorizationCode",
+      "paymentID",
+      "message",
+      "displayMessage",
+      "merchantTransactionKey",
+      "result"
+    ]
+  },
+  "DeleteBankAccountType": {
+    "method": "DELETE",
+    "path": "/settings/bankaccounttype",
+    "body": [
+      "bankAccountTyId"
+    ],
+    "response": [
+      "result"
+    ]
+  },
+  "DeleteCalendarItem": {
+    "method": "DELETE",
+    "path": "/calendar/item",
+    "body": [
+      "userID",
+      "calendarID",
+      "calendarItemID"
+    ],
+    "response": [
+      "calendarID",
+      "calendarItemID",
+      "result"
+    ]
+  },
+  "DeleteCustomerExtended": {
+    "method": "DELETE",
+    "path": "/customers/extended",
+    "body": [
+      "customerID",
+      "extendedGroupID",
+      "customerExtendedID",
+      "customerKey"
+    ],
+    "response": [
+      "customerExtendedID",
+      "result"
+    ]
+  },
+  "DeleteCustomerFileFolder": {
+    "method": "DELETE",
+    "path": "/folder",
+    "body": [],
+    "response": [
+      "result"
+    ]
+  },
+  "DeleteCustomerLead": {
+    "method": "DELETE",
+    "path": "/customerlead",
+    "body": [
+      "customerID",
+      "customerLeadID",
+      "customerKey"
+    ],
+    "response": [
+      "result"
+    ]
+  },
+  "DeleteCustomerWallItem": {
+    "method": "DELETE",
+    "path": "/customers/wall",
+    "body": [
+      "customerID",
+      "wallItemID",
+      "olderThanEntryDate",
+      "customerKey"
+    ],
+    "response": [
+      "countOfDeletedRows",
+      "result"
+    ]
+  },
+  "DeleteDestination": {
+    "method": "DELETE",
+    "path": "/destination",
+    "body": [],
+    "response": [
+      "result"
+    ]
+  },
+  "DeleteExtendedDbEntity": {
+    "method": "DELETE",
+    "path": "/extendeddb",
+    "body": [
+      "schemaName",
+      "entityName"
+    ],
+    "response": [
+      "result"
+    ]
+  },
+  "DeleteExtendedDbSchema": {
+    "method": "DELETE",
+    "path": "/extendeddb/schema",
+    "body": [
+      "schemaName"
+    ],
+    "response": [
+      "result"
+    ]
+  },
+  "DeleteProductFromCategory": {
+    "method": "DELETE",
+    "path": "/webcategory/product",
+    "body": [
+      "webID",
+      "categoryID",
+      "itemCode"
+    ],
+    "response": [
+      "categoryID",
+      "webID",
+      "itemCode",
+      "result"
+    ]
+  },
+  "DeleteQualificationOverride": {
+    "method": "DELETE",
+    "path": "/qualification/override",
+    "body": [
+      "customerID",
+      "overrideID",
+      "customerKey"
+    ],
+    "response": [
+      "result"
+    ]
+  },
+  "DeleteRelease": {
+    "method": "DELETE",
+    "path": "/resourceset/release",
+    "body": [],
+    "response": [
+      "result"
+    ]
+  },
+  "DeleteResourceSetCulture": {
+    "method": "DELETE",
+    "path": "/resourceset/culture",
+    "body": [],
+    "response": [
+      "result"
+    ]
+  },
+  "DeleteResourceSetEnvironment": {
+    "method": "DELETE",
+    "path": "/resourceset/environment",
+    "body": [],
+    "response": [
+      "result"
+    ]
+  },
+  "DeleteResourceSetGroup": {
+    "method": "DELETE",
+    "path": "/resourceset/group",
+    "body": [],
+    "response": [
+      "result"
+    ]
+  },
+  "DeleteResourceSetItem": {
+    "method": "DELETE",
+    "path": "/resourceitem",
+    "body": [],
+    "response": [
+      "result"
+    ]
+  },
+  "DeleteWebCategory": {
+    "method": "DELETE",
+    "path": "/webcategory",
+    "body": [
+      "webID",
+      "categoryID"
+    ],
+    "response": [
+      "categoryID",
+      "webID",
+      "result"
+    ]
+  },
+  "DeployRelease": {
+    "method": "POST",
+    "path": "/resourceset/release/deploy",
+    "body": [],
+    "response": [
+      "resourceSetID",
+      "version",
+      "result"
+    ]
+  },
+  "DequeueCustomerEvents": {
+    "method": "POST",
+    "path": "/customers/events",
+    "body": [],
+    "response": [
+      "customerEvents",
+      "result"
+    ]
+  },
+  "DisableDestination": {
+    "method": "PUT",
+    "path": "/destination/disable",
+    "body": [],
+    "response": [
+      "result"
+    ]
+  },
+  "DisableFilterGroup": {
+    "method": "PUT",
+    "path": "/filtergroup/disable",
+    "body": [],
+    "response": [
+      "result"
+    ]
+  },
+  "DisableFiltering": {
+    "method": "PUT",
+    "path": "/filtering/disable",
+    "body": [],
+    "response": [
+      "result"
+    ]
+  },
+  "EditBankAccountType": {
+    "method": "PUT",
+    "path": "/settings/bankaccounttype",
+    "body": [
+      "bankAccountTyId",
+      "description"
+    ],
+    "response": [
+      "result"
+    ]
+  },
+  "EnableDestination": {
+    "method": "PUT",
+    "path": "/destination/enable",
+    "body": [],
+    "response": [
+      "result"
+    ]
+  },
+  "EnableFilterGroup": {
+    "method": "PUT",
+    "path": "/filtergroup/enable",
+    "body": [],
+    "response": [
+      "result"
+    ]
+  },
+  "EnableFiltering": {
+    "method": "PUT",
+    "path": "/filtering/enable",
+    "body": [],
+    "response": [
+      "result"
+    ]
+  },
+  "FireResponder": {
+    "method": "POST",
+    "path": "/autoresponder/fire",
+    "body": [
+      "customerID",
+      "orderID",
+      "customerKey",
+      "orderKey"
+    ],
+    "response": [
+      "result"
+    ]
+  },
+  "GetAccountDirectDeposit": {
+    "method": "GET",
+    "path": "/account/directdeposit",
+    "query": [
+      "customerID",
+      "customerKey"
+    ],
+    "response": [
+      "nameOnAccount",
+      "bankAccountNumberDisplay",
+      "bankRoutingNumber",
+      "depositAccountType",
+      "bankName",
+      "bankAddress",
+      "bankCity",
+      "bankState",
+      "bankZip",
+      "bankCountry",
+      "bankAccountType",
+      "iban",
+      "swiftCode",
+      "depositAccountTypeID",
+      "result"
+    ]
+  },
+  "GetAdminWhitelist": {
+    "method": "GET",
+    "path": "/whitelist/adminAuthorization:",
+    "response": [
+      "whitelistRanges",
+      "result"
+    ]
+  },
+  "GetAlertSettings": {
+    "method": "GET",
+    "path": "/alertsettingsAuthorization:",
+    "response": [
+      "alertOptIn",
+      "alertEmail",
+      "alertPhone",
+      "result"
+    ]
+  },
+  "GetApiWhitelist": {
+    "method": "GET",
+    "path": "/whitelist/api",
+    "query": [
+      "ipRangeID"
+    ],
+    "response": [
+      "whitelistRanges",
+      "result"
+    ]
+  },
+  "GetAutoOrders": {
+    "method": "GET",
+    "path": "/autoorder",
+    "query": [
+      "customerID",
+      "customerKey"
+    ],
+    "response": [
+      "autoOrders",
+      "result"
+    ]
+  },
+  "GetBankAccountTypes": {
+    "method": "GET",
+    "path": "/settings/bankaccounttypes",
+    "query": [
+      "bankAccountTyId",
+      "description"
+    ],
+    "response": [
+      "bankAccountTypes",
+      "result"
+    ]
+  },
+  "GetBillAmountsDue": {
+    "method": "GET",
+    "path": "/payout/amountsdue",
+    "query": [
+      "startDate",
+      "endDate",
+      "currencyCode",
+      "countryCode",
+      "payableType",
+      "paymentCardType",
+      "minimumAmount",
+      "maximumAmount",
+      "customers"
+    ],
+    "response": [
+      "amountsDue",
+      "result"
+    ]
+  },
+  "GetBillPayments": {
+    "method": "GET",
+    "path": "/payout/payments",
+    "query": [
+      "paymentIDs",
+      "startPaymentID",
+      "endPaymentID"
+    ],
+    "response": [
+      "billPayments",
+      "result"
+    ]
+  },
+  "GetBillPayoutQueue": {
+    "method": "GET",
+    "path": "/payout/payoutqueue",
+    "query": [
+      "payoutQueueRequestID",
+      "currencyCode",
+      "payableType",
+      "paymentCardType",
+      "startDate",
+      "endDate"
+    ],
+    "response": [
+      "billPayoutQueueItems",
+      "result"
+    ]
+  },
+  "GetBills": {
+    "method": "GET",
+    "path": "/payout/bills",
+    "query": [
+      "customers",
+      "bills",
+      "startBillID",
+      "endBillID",
+      "warehouseID",
+      "datePaymentDueStart",
+      "datePaymentDueEnd",
+      "currencyCode",
+      "payableType",
+      "taxablePeriodType",
+      "taxablePeriodID"
+    ],
+    "response": [
+      "billItems",
+      "result"
+    ]
+  },
+  "GetBinaryPreference": {
+    "method": "GET",
+    "path": "/tree/binary",
+    "query": [
+      "customerID",
+      "customerKey"
+    ],
+    "response": [
+      "customerID",
+      "placementType",
+      "customerKey",
+      "result"
+    ]
+  },
+  "GetCommissionReport": {
+    "method": "GET",
+    "path": "/commissions",
+    "query": [
+      "periodType",
+      "periodID",
+      "reportName",
+      "parameterData"
+    ],
+    "response": [
+      "reportData",
+      "result"
+    ]
+  },
+  "GetCompanyNews": {
+    "method": "GET",
+    "path": "/companynews",
+    "query": [
+      "departmentType"
+    ],
+    "response": [
+      "companyNews",
+      "result"
+    ]
+  },
+  "GetCompanyNewsItem": {
+    "method": "GET",
+    "path": "/companynews/item",
+    "query": [
+      "newsID"
+    ],
+    "response": [
+      "description",
+      "newsID",
+      "createdDate",
+      "webSettings",
+      "companySettings",
+      "content",
+      "departments",
+      "result"
+    ]
+  },
+  "GetCountryRegions": {
+    "method": "GET",
+    "path": "/country/regionsAuthorization:",
+    "response": [
+      "countries",
+      "selectedCountry",
+      "regions",
+      "result"
+    ]
+  },
+  "GetCustomerBalances": {
+    "method": "GET",
+    "path": "/customers/balances",
+    "query": [
+      "customerID",
+      "customerKey"
+    ],
+    "response": [
+      "customerBalances",
+      "result"
+    ]
+  },
+  "GetCustomerBilling": {
+    "method": "GET",
+    "path": "/account",
+    "query": [
+      "customerID",
+      "customerKey"
+    ],
+    "response": [
+      "primaryCreditCard",
+      "secondaryCreditCard",
+      "bankAccount",
+      "primaryWalletAccount",
+      "secondaryWallletAccount",
+      "thirdWalletAccount",
+      "fourthWalletAccount",
+      "fifthWalletAccount",
+      "result"
+    ]
+  },
+  "GetCustomerExtended": {
+    "method": "GET",
+    "path": "/customers/extended",
+    "query": [
+      "extendedGroupID",
+      "customerID",
+      "customerKey"
+    ],
+    "response": [
+      "items",
+      "result"
+    ]
+  },
+  "GetCustomerFolders": {
+    "method": "GET",
+    "path": "/folderAuthorization:",
+    "response": [
+      "folderCount",
+      "parentFolderID",
+      "parentFolderName",
+      "customerFolderList",
+      "result"
+    ]
+  },
+  "GetCustomerLeads": {
+    "method": "GET",
+    "path": "/customerlead",
+    "query": [
+      "customerID",
+      "customerLeadID",
+      "greaterThanCustomerLeadID",
+      "batchSize",
+      "customerKey"
+    ],
+    "response": [
+      "customerLeads",
+      "result"
+    ]
+  },
+  "GetCustomerLeadSocialNetworks": {
+    "method": "GET",
+    "path": "/customerlead/socialnetworks",
+    "query": [
+      "customerID",
+      "customerLeadID",
+      "customerKey"
+    ],
+    "response": [
+      "customerLeadSocialNetwork",
+      "result"
+    ]
+  },
+  "GetCustomerNotes": {
+    "method": "GET",
+    "path": "/customers/notes",
+    "query": [
+      "customerID",
+      "customerKey"
+    ],
+    "response": [
+      "customerNotes",
+      "result"
+    ]
+  },
+  "GetCustomers": {
+    "method": "GET",
+    "path": "/customers",
+    "query": [
+      "customerID",
+      "enrollerID",
+      "sponsorID",
+      "customerKey",
+      "enrollerKey",
+      "sponsorKey"
+    ],
+    "response": [
+      "customers",
+      "recordCount",
+      "result"
+    ]
+  },
+  "GetCustomerSite": {
+    "method": "GET",
+    "path": "/customers/site",
+    "query": [
+      "webAlias",
+      "customerID",
+      "customerKey"
+    ],
+    "response": [
+      "customerID",
+      "webAlias",
+      "firstName",
+      "lastName",
+      "company",
+      "address1",
+      "address2",
+      "city",
+      "state",
+      "zip",
+      "country",
+      "email",
+      "phone",
+      "phone2",
+      "fax",
+      "notes1",
+      "notes2",
+      "notes3",
+      "notes4",
+      "url1",
+      "url2",
+      "url3",
+      "url4",
+      "url5",
+      "url6",
+      "url7",
+      "url8",
+      "url9",
+      "url10",
+      "url1Description",
+      "url2Description",
+      "url3Description",
+      "url4Description",
+      "url5Description",
+      "url6Description",
+      "url7Description",
+      "url8Description",
+      "url9Description",
+      "url10Description",
+      "image1",
+      "image2",
+      "imageUrl1",
+      "imageUrl2",
+      "customerKey",
+      "dataImage1",
+      "dataImage2",
+      "result"
+    ]
+  },
+  "GetCustomerSocialNetworks": {
+    "method": "GET",
+    "path": "/customers/socialnetworks",
+    "query": [
+      "customerID",
+      "customerKey"
+    ],
+    "response": [
+      "customerSocialNetwork",
+      "result"
+    ]
+  },
+  "GetCustomerWall": {
+    "method": "GET",
+    "path": "/customers/wall",
+    "query": [
+      "customerID",
+      "wallItemID",
+      "customerKey"
+    ],
+    "response": [
+      "customerWallItems",
+      "result"
+    ]
+  },
+  "GetCustomReport": {
+    "method": "GET",
+    "path": "/report",
+    "query": [
+      "reportID"
+    ],
+    "response": [
+      "reportData",
+      "result"
+    ]
+  },
+  "GetDestinations": {
+    "method": "GET",
+    "path": "/destinationAuthorization:",
+    "response": [
+      "destinations",
+      "result"
+    ]
+  },
+  "GetDestinationTest": {
+    "method": "GET",
+    "path": "/destination/gettest",
+    "query": [
+      "requestId"
+    ],
+    "response": [
+      "success",
+      "requestId",
+      "data",
+      "result"
+    ]
+  },
+  "GetDownline": {
+    "method": "GET",
+    "path": "/commissions/downline",
+    "query": [
+      "treeType",
+      "customerID",
+      "periodType",
+      "periodID",
+      "maxLevelDepth",
+      "customerTypes",
+      "ranks",
+      "payRanks",
+      "customerStatusTypes",
+      "sortByLevel",
+      "batchOffset",
+      "customerKey"
+    ],
+    "response": [
+      "nodes",
+      "recordCount",
+      "result"
+    ]
+  },
+  "GetExtendedDbEntity": {
+    "method": "GET",
+    "path": "/extendeddb",
+    "query": [
+      "schemaName",
+      "entityName"
+    ],
+    "response": [
+      "entity",
+      "result"
+    ]
+  },
+  "GetExtendedDbSchema": {
+    "method": "GET",
+    "path": "/extendeddb/schema",
+    "query": [
+      "schemaName"
+    ],
+    "response": [
+      "schema",
+      "result"
+    ]
+  },
+  "GetExtendedDbSettings": {
+    "method": "GET",
+    "path": "/extendeddbsettingsAuthorization:",
+    "response": [
+      "excludedSchemas",
+      "result"
+    ]
+  },
+  "GetFileContents": {
+    "method": "GET",
+    "path": "/file/content",
+    "query": [
+      "customerID",
+      "customerKey"
+    ],
+    "response": [
+      "file",
+      "result"
+    ]
+  },
+  "GetFiles": {
+    "method": "GET",
+    "path": "/file",
+    "query": [
+      "customerID",
+      "customerKey",
+      "parentFolderID"
+    ],
+    "response": [
+      "fileCount",
+      "parentFolderID",
+      "parentFolderName",
+      "customerFileList",
+      "result"
+    ]
+  },
+  "GetFilterGroup": {
+    "method": "GET",
+    "path": "/filtergroupAuthorization:",
+    "response": [
+      "filterGroups",
+      "result"
+    ]
+  },
+  "GetGuests": {
+    "method": "GET",
+    "path": "/guestAuthorization:",
+    "response": [
+      "guests",
+      "result"
+    ]
+  },
+  "GetGuestSocialNetworks": {
+    "method": "GET",
+    "path": "/guest/socialnetwork",
+    "query": [
+      "guestID"
+    ],
+    "response": [
+      "guestSocialNetworks",
+      "result"
+    ]
+  },
+  "GetItems": {
+    "method": "GET",
+    "path": "/item",
+    "query": [
+      "currencyCode",
+      "priceType",
+      "warehouseID",
+      "itemCodes",
+      "returnLongDetail",
+      "restrictToWarehouse"
+    ],
+    "response": [
+      "items",
+      "result"
+    ]
+  },
+  "GetOrderInvoice": {
+    "method": "GET",
+    "path": "/orders/invoice",
+    "query": [
+      "orderID",
+      "orderKey",
+      "reportlayoutID",
+      "format",
+      "autoOrderID"
+    ],
+    "response": [
+      "invoiceData",
+      "result"
+    ]
+  },
+  "GetOrderInvoiceBatch": {
+    "method": "GET",
+    "path": "/orders/invoicebatch",
+    "query": [
+      "reportlayoutID",
+      "batchId",
+      "warehouseId"
+    ],
+    "response": [
+      "invoiceData",
+      "result"
+    ]
+  },
+  "GetOrders": {
+    "method": "GET",
+    "path": "/orders",
+    "query": [
+      "customerID",
+      "orderID",
+      "orderDateStart",
+      "orderDateEnd",
+      "warehouseID",
+      "currencyCode",
+      "customerKey",
+      "orderKey",
+      "orderSubStatusTy",
+      "batchID",
+      "referralID"
+    ],
+    "response": [
+      "orders",
+      "recordCount",
+      "result"
+    ]
+  },
+  "GetParties": {
+    "method": "GET",
+    "path": "/party",
+    "query": [
+      "partyID",
+      "hostID",
+      "distributorID",
+      "partyStatusType",
+      "bookingPartyID",
+      "field1",
+      "field2",
+      "field3",
+      "field4",
+      "field5",
+      "partyExternalID"
+    ],
+    "response": [
+      "parties",
+      "result"
+    ]
+  },
+  "GetPartyGuests": {
+    "method": "GET",
+    "path": "/party/guest",
+    "query": [
+      "partyID"
+    ],
+    "response": [
+      "guests",
+      "result"
+    ]
+  },
+  "GetPointAccount": {
+    "method": "GET",
+    "path": "/point/account",
+    "query": [
+      "pointAccountID",
+      "customerID",
+      "customerKey"
+    ],
+    "response": [
+      "balance",
+      "result"
+    ]
+  },
+  "GetQualificationOverrides": {
+    "method": "GET",
+    "path": "/qualification/override",
+    "query": [
+      "customerID",
+      "overrideID",
+      "batchSize",
+      "customerKey"
+    ],
+    "response": [
+      "qualificationOverrides",
+      "result"
+    ]
+  },
+  "GetRandomMessage": {
+    "method": "GET",
+    "path": "/randommessage",
+    "query": [
+      "languageID"
+    ],
+    "response": [
+      "randomMessageID",
+      "content",
+      "result"
+    ]
+  },
+  "GetRankQualifications": {
+    "method": "GET",
+    "path": "/qualification",
+    "query": [
+      "customerID",
+      "rankID",
+      "periodType",
+      "periodID",
+      "cultureCode",
+      "rankGroupID",
+      "customerKey"
+    ],
+    "response": [
+      "customerID",
+      "rankID",
+      "rankDescription",
+      "qualifies",
+      "qualifiesOverride",
+      "payeeQualificationLegs",
+      "backRankID",
+      "backRankDescription",
+      "nextRankID",
+      "nextRankDescription",
+      "score",
+      "customerKey",
+      "result"
+    ]
+  },
+  "GetRealTimeCommissionDetail": {
+    "method": "GET",
+    "path": "/commissions/realtime/detail",
+    "query": [
+      "customerID",
+      "periodType",
+      "periodID",
+      "bonusID",
+      "customerKey"
+    ],
+    "response": [
+      "commissionDetails",
+      "result"
+    ]
+  },
+  "GetRealTimeCommissions": {
+    "method": "GET",
+    "path": "/commissions/realtime",
+    "query": [
+      "customerID",
+      "customerKey"
+    ],
+    "response": [
+      "commissions",
+      "result"
+    ]
+  },
+  "GetReIndexHistory": {
+    "method": "GET",
+    "path": "/reindexsettings/history",
+    "query": [
+      "destinationId",
+      "pageNumber"
+    ],
+    "response": [
+      "reIndexHistoryItems",
+      "result"
+    ]
+  },
+  "GetReIndexSettings": {
+    "method": "GET",
+    "path": "/reindexsettingsAuthorization:",
+    "response": [
+      "reIndexStartTime",
+      "reIndexMaxDuration",
+      "lastReIndexed",
+      "reIndexError",
+      "result"
+    ]
+  },
+  "GetReleases": {
+    "method": "GET",
+    "path": "/resourceset/releaseAuthorization:",
+    "response": [
+      "releases",
+      "result"
+    ]
+  },
+  "GetResourceSetCultures": {
+    "method": "GET",
+    "path": "/resourceset/cultureAuthorization:",
+    "response": [
+      "cultures",
+      "result"
+    ]
+  },
+  "GetResourceSetEnvironments": {
+    "method": "GET",
+    "path": "/resourceset/environmentAuthorization:",
+    "response": [
+      "environments",
+      "result"
+    ]
+  },
+  "GetResourceSetGroups": {
+    "method": "GET",
+    "path": "/resourceset/groupAuthorization:",
+    "response": [
+      "groups",
+      "result"
+    ]
+  },
+  "GetResourceSetItems": {
+    "method": "GET",
+    "path": "/resourceitemAuthorization:",
+    "response": [
+      "items",
+      "result"
+    ]
+  },
+  "GetResourceSets": {
+    "method": "GET",
+    "path": "/resourcesetAuthorization:",
+    "response": [
+      "resourceSets",
+      "result"
+    ]
+  },
+  "GetSession": {
+    "method": "GET",
+    "path": "/session",
+    "query": [
+      "sessionID"
+    ],
+    "response": [
+      "sessionData",
+      "result"
+    ]
+  },
+  "GetSQLReport": {
+    "method": "GET",
+    "path": "/sqlreport",
+    "query": [
+      "reportID",
+      "reportEngineVersion"
+    ],
+    "response": [
+      "reportData",
+      "result"
+    ]
+  },
+  "GetSubscription": {
+    "method": "GET",
+    "path": "/subscription",
+    "query": [
+      "subscriptionID",
+      "customerID",
+      "customerKey"
+    ],
+    "response": [
+      "status",
+      "startDate",
+      "expireDate",
+      "result"
+    ]
+  },
+  "GetSubscriptions": {
+    "method": "GET",
+    "path": "/subscriptions",
+    "query": [
+      "customerID",
+      "customerKey",
+      "includeInactive"
+    ],
+    "response": [
+      "subscriptions",
+      "result"
+    ]
+  },
+  "GetTableSettings": {
+    "method": "GET",
+    "path": "/tablesettingsAuthorization:",
+    "response": [
+      "tableSettings",
+      "result"
+    ]
+  },
+  "GetUpline": {
+    "method": "GET",
+    "path": "/commissions/upline",
+    "query": [
+      "treeType",
+      "customerID",
+      "periodType",
+      "periodID",
+      "customerKey",
+      "batchOffset"
+    ],
+    "response": [
+      "nodes",
+      "result"
+    ]
+  },
+  "GetUserPermissions": {
+    "method": "GET",
+    "path": "/user/permissions",
+    "query": [
+      "loginName"
+    ],
+    "response": [
+      "restrictToCustomerTypes",
+      "restrictToCustomerStatuses",
+      "restrictToWarehouses",
+      "restrictToCountries",
+      "restrictToCurrencies",
+      "viewDeletedCustomers",
+      "allowRemoteCheckPrint",
+      "allowOverrideItemPrice",
+      "allowStatementPrint",
+      "defaultWarehouseID",
+      "languageID",
+      "cultureCode",
+      "result"
+    ]
+  },
+  "GetVolumes": {
+    "method": "GET",
+    "path": "/commissions/volumes",
+    "query": [
+      "periodType",
+      "periodID",
+      "customerID",
+      "customerKey"
+    ],
+    "response": [
+      "volumes",
+      "result"
+    ]
+  },
+  "GetWarehouses": {
+    "method": "GET",
+    "path": "/warehouse",
+    "response": [
+      "warehouses",
+      "result"
+    ]
+  },
+  "MoveCustomerFile": {
+    "method": "POST",
+    "path": "/file/move",
+    "body": [],
+    "response": [
+      "fileID",
+      "folderID",
+      "result"
+    ]
+  },
+  "OptInEmail": {
+    "method": "POST",
+    "path": "/email/optin",
+    "body": [
+      "email"
+    ],
+    "response": [
+      "recordsAffected",
+      "result"
+    ]
+  },
+  "OptInPushNotification": {
+    "method": "POST",
+    "path": "/push/optin",
+    "body": [
+      "customerID",
+      "customerKey"
+    ],
+    "response": [
+      "recordsAffected",
+      "result"
+    ]
+  },
+  "OptInSms": {
+    "method": "POST",
+    "path": "/sms/optin",
+    "body": [
+      "customerID",
+      "phoneNumber",
+      "customerKey"
+    ],
+    "response": [
+      "recordsAffected",
+      "result"
+    ]
+  },
+  "OptOutEmail": {
+    "method": "POST",
+    "path": "/email/optout",
+    "body": [
+      "email"
+    ],
+    "response": [
+      "recordsAffected",
+      "result"
+    ]
+  },
+  "OptOutPushNotification": {
+    "method": "POST",
+    "path": "/push/optout",
+    "body": [
+      "customerID",
+      "customerKey"
+    ],
+    "response": [
+      "recordsAffected",
+      "result"
+    ]
+  },
+  "OptOutSms": {
+    "method": "POST",
+    "path": "/sms/optout",
+    "body": [
+      "customerID",
+      "phoneNumber",
+      "customerKey"
+    ],
+    "response": [
+      "recordsAffected",
+      "result"
+    ]
+  },
+  "PlaceBinaryNode": {
+    "method": "POST",
+    "path": "/tree/binary",
+    "body": [
+      "customerID",
+      "toParentID",
+      "placementType",
+      "reason",
+      "customerKey",
+      "toParentKey"
+    ],
+    "response": [
+      "result"
+    ]
+  },
+  "PlaceEnrollerNode": {
+    "method": "POST",
+    "path": "/tree/enroller",
+    "body": [
+      "customerID",
+      "toEnrollerID",
+      "reason",
+      "customerKey",
+      "toEnrollerKey"
+    ],
+    "response": [
+      "result"
+    ]
+  },
+  "PlaceMatrixNode": {
+    "method": "POST",
+    "path": "/tree/matrix",
+    "body": [
+      "customerID",
+      "toParentCustomerID",
+      "toParentMatrixID",
+      "reason",
+      "placement",
+      "customerKey",
+      "toParentCustomerKey",
+      "toParentMatrixKey"
+    ],
+    "response": [
+      "result"
+    ]
+  },
+  "PlaceUniLevelNode": {
+    "method": "POST",
+    "path": "/tree/unilevel",
+    "body": [
+      "customerID",
+      "toSponsorID",
+      "reason",
+      "optionalPlacement",
+      "optionalFindAvailable",
+      "optionalUnilevelBuildTypeID",
+      "customerKey",
+      "toSponsorKey"
+    ],
+    "response": [
+      "result"
+    ]
+  },
+  "ProcessTransaction": {
+    "unavailable": true
+  },
+  "QueueBillPayout": {
+    "method": "POST",
+    "path": "/payout/queuepayout",
+    "body": [
+      "startDate",
+      "endDate",
+      "currencyCode",
+      "countryCode",
+      "payableType",
+      "paymentCardType",
+      "reference",
+      "batchDescription",
+      "useBatchPayout",
+      "bankAccountID",
+      "fee",
+      "feeDescription",
+      "startCheckNumber",
+      "customerID",
+      "customerKey",
+      "paymentDate",
+      "minimumAmount",
+      "maximumAmount",
+      "groupPaymentByVendor"
+    ],
+    "response": [
+      "paymentQueueRequestId",
+      "result"
+    ]
+  },
+  "RefundPriorCreditCardCharge": {
+    "method": "POST",
+    "path": "/payment/refund/cc",
+    "body": [
+      "returnPaymentID",
+      "orderID",
+      "maxAmount",
+      "orderKey"
+    ],
+    "response": [
+      "amount",
+      "authorizationCode",
+      "paymentID",
+      "message",
+      "displayMessage",
+      "merchantTransactionKey",
+      "result"
+    ]
+  },
+  "RefundPriorDebitCharge": {
+    "method": "POST",
+    "path": "/payment/refund/debit",
+    "body": [
+      "returnPaymentID",
+      "orderID",
+      "maxAmount",
+      "orderKey"
+    ],
+    "response": [
+      "amount",
+      "authorizationCode",
+      "paymentID",
+      "message",
+      "displayMessage",
+      "merchantTransactionKey",
+      "result"
+    ]
+  },
+  "RefundPriorWalletCharge": {
+    "method": "POST",
+    "path": "/payment/refund/wallet",
+    "body": [
+      "returnPaymentID",
+      "maxAmount",
+      "orderKey"
+    ],
+    "response": [
+      "amount",
+      "authorizationCode",
+      "paymentID",
+      "message",
+      "displayMessage",
+      "merchantTransactionKey",
+      "result"
+    ]
+  },
+  "RemoveAdminWhitelist": {
+    "method": "DELETE",
+    "path": "/whitelist/admin",
+    "body": [],
+    "response": [
+      "result"
+    ]
+  },
+  "RemoveApiWhitelist": {
+    "method": "DELETE",
+    "path": "/whitelist/api",
+    "body": [
+      "iPRangeID"
+    ],
+    "response": [
+      "result"
+    ]
+  },
+  "RemovePartyGuests": {
+    "method": "DELETE",
+    "path": "/party/guest",
+    "body": [
+      "partyID",
+      "guestIDs"
+    ],
+    "response": [
+      "result"
+    ]
+  },
+  "ResourceSetCheckIn": {
+    "method": "POST",
+    "path": "/resourceset/checkin",
+    "body": [],
+    "response": [
+      "subscriptionKey",
+      "environmentCode",
+      "version",
+      "releaseDate",
+      "className",
+      "namespace",
+      "result"
+    ]
+  },
+  "RetireResourceSet": {
+    "method": "DELETE",
+    "path": "/resourceset",
+    "body": [],
+    "response": [
+      "result"
+    ]
+  },
+  "RevertToRecentRelease": {
+    "method": "POST",
+    "path": "/resourceset/release/revert",
+    "body": [],
+    "response": [
+      "resourceSetID",
+      "releaseDate",
+      "version",
+      "result"
+    ]
+  },
+  "SendAuthorizationMFACode": {
+    "method": "POST",
+    "path": "/sms/authorizationmfa",
+    "body": [
+      "toNumber",
+      "message",
+      "code"
+    ],
+    "response": [
+      "result"
+    ]
+  },
+  "SendEmail": {
+    "method": "POST",
+    "path": "/email",
+    "body": [
+      "customerID",
+      "mailFrom",
+      "mailTo",
+      "subject",
+      "body",
+      "customerKey"
+    ],
+    "response": [
+      "result"
+    ]
+  },
+  "SendSms": {
+    "method": "POST",
+    "path": "/sms",
+    "body": [
+      "customerID",
+      "message",
+      "phone",
+      "customerKey"
+    ],
+    "response": [
+      "result"
+    ]
+  },
+  "SetAccountChecking": {
+    "method": "PUT",
+    "path": "/account/checking",
+    "body": [
+      "customerID",
+      "bankAccountNumber",
+      "bankRoutingNumber",
+      "bankName",
+      "bankAccountType",
+      "nameOnAccount",
+      "useMainAddress",
+      "billingAddress",
+      "billingCity",
+      "billingZip",
+      "driversLicenseNumber",
+      "customerKey"
+    ],
+    "response": [
+      "result"
+    ]
+  },
+  "SetAccountCreditCardToken": {
+    "method": "PUT",
+    "path": "/account/cctoken",
+    "body": [
+      "customerID",
+      "creditCardAccountType",
+      "creditCardToken",
+      "expirationMonth",
+      "expirationYear",
+      "creditCardType",
+      "useMainAddress",
+      "customerKey"
+    ],
+    "response": [
+      "result"
+    ]
+  },
+  "SetAccountDirectDeposit": {
+    "method": "PUT",
+    "path": "/account/directdeposit",
+    "body": [
+      "customerID",
+      "nameOnAccount",
+      "bankAccountNumber",
+      "bankRoutingNumber",
+      "bankName",
+      "bankAddress",
+      "bankCity",
+      "bankState",
+      "bankZip",
+      "bankCountry",
+      "iban",
+      "swiftCode",
+      "customerKey"
+    ],
+    "response": [
+      "result"
+    ]
+  },
+  "SetAccountWallet": {
+    "method": "PUT",
+    "path": "/account/wallet",
+    "body": [
+      "customerID",
+      "walletAccountType",
+      "walletType",
+      "walletAccount",
+      "walletOther1",
+      "walletOther2",
+      "walletOther3",
+      "customerKey"
+    ],
+    "response": [
+      "result"
+    ]
+  },
+  "SetBinaryPreference": {
+    "method": "PUT",
+    "path": "/tree/binary",
+    "body": [
+      "customerID",
+      "placementType",
+      "customerKey"
+    ],
+    "response": [
+      "result"
+    ]
+  },
+  "SetCustomerLeadSocialNetworks": {
+    "method": "PUT",
+    "path": "/customerlead/socialnetworks",
+    "body": [
+      "customerLeadID",
+      "customerID",
+      "customerLeadSocialNetworks",
+      "customerKey"
+    ],
+    "response": [
+      "result"
+    ]
+  },
+  "SetCustomerSite": {
+    "method": "PUT",
+    "path": "/customers/site",
+    "body": [
+      "customerID",
+      "webAlias",
+      "firstName",
+      "lastName",
+      "company",
+      "address1",
+      "address2",
+      "city",
+      "zip",
+      "email",
+      "phone",
+      "phone2",
+      "fax",
+      "notes1",
+      "notes2",
+      "notes3",
+      "notes4",
+      "url1",
+      "url2",
+      "url3",
+      "url4",
+      "url5",
+      "url6",
+      "url7",
+      "url8",
+      "url9",
+      "url10",
+      "url1Description",
+      "url2Description",
+      "url3Description",
+      "url4Description",
+      "url5Description",
+      "url6Description",
+      "url7Description",
+      "url8Description",
+      "url9Description",
+      "url10Description",
+      "customerKey"
+    ],
+    "response": [
+      "result"
+    ]
+  },
+  "SetCustomerSiteImage": {
+    "method": "PUT",
+    "path": "/customers/site/image",
+    "body": [
+      "customerID",
+      "imageName",
+      "imageData",
+      "customerSiteImageType",
+      "customerKey"
+    ],
+    "response": [
+      "result"
+    ]
+  },
+  "SetCustomerSocialNetworks": {
+    "method": "PUT",
+    "path": "/customers/socialnetworks",
+    "body": [
+      "customerID",
+      "customerSocialNetworks",
+      "customerKey"
+    ],
+    "response": [
+      "result"
+    ]
+  },
+  "SetGuestSocialNetworks": {
+    "method": "PUT",
+    "path": "/guest/socialnetwork",
+    "body": [
+      "guestID",
+      "guestSocialNetworks"
+    ],
+    "response": [
+      "result"
+    ]
+  },
+  "SetItemCountryRegion": {
+    "method": "PUT",
+    "path": "/item/countryregion",
+    "body": [
+      "itemCode",
+      "countryCode",
+      "regionCode",
+      "taxed",
+      "taxedFed",
+      "taxedState",
+      "useTaxOverride",
+      "taxOverridePct",
+      "bulkUpdate"
+    ],
+    "response": [
+      "result"
+    ]
+  },
+  "SetItemImage": {
+    "method": "PUT",
+    "path": "/item/image",
+    "body": [
+      "itemCode",
+      "tinyImageName",
+      "tinyImageData",
+      "smallImageName",
+      "smallImageData",
+      "largeImageName",
+      "largeImageData"
+    ],
+    "response": [
+      "result"
+    ]
+  },
+  "SetItemKitMembers": {
+    "method": "PUT",
+    "path": "/item/kit/members",
+    "body": [
+      "parentItemCode",
+      "itemKitMembers"
+    ],
+    "response": [
+      "result"
+    ]
+  },
+  "SetItemPointAccount": {
+    "method": "PUT",
+    "path": "/item/pointaccount",
+    "body": [],
+    "response": [
+      "result"
+    ]
+  },
+  "SetItemPrice": {
+    "method": "PUT",
+    "path": "/item/price",
+    "body": [
+      "itemCode",
+      "currencyCode",
+      "priceType",
+      "price",
+      "businessVolume",
+      "commissionableVolume",
+      "taxablePrice",
+      "shippingPrice",
+      "other1Price",
+      "other2Price",
+      "other3Price",
+      "other4Price",
+      "other5Price",
+      "other6Price",
+      "other7Price",
+      "other8Price",
+      "other9Price",
+      "other10Price"
+    ],
+    "response": [
+      "result"
+    ]
+  },
+  "SetItemSubscription": {
+    "method": "PUT",
+    "path": "/item/subscription",
+    "body": [],
+    "response": [
+      "result"
+    ]
+  },
+  "SetItemWarehouse": {
+    "method": "PUT",
+    "path": "/item/warehouse",
+    "body": [
+      "itemCode",
+      "warehouseID",
+      "isAvailable",
+      "itemManageTypeID"
+    ],
+    "response": [
+      "result"
+    ]
+  },
+  "SetQualificationOverride": {
+    "method": "PUT",
+    "path": "/qualification/override",
+    "body": [
+      "customerID",
+      "overrideID",
+      "qualifies",
+      "periodType",
+      "startPeriodID",
+      "endPeriodID",
+      "amount",
+      "customerKey"
+    ],
+    "response": [
+      "result"
+    ]
+  },
+  "SetSession": {
+    "method": "PUT",
+    "path": "/session",
+    "body": [
+      "sessionID",
+      "sessionData"
+    ],
+    "response": [
+      "result"
+    ]
+  },
+  "SubmitDestinationTest": {
+    "method": "POST",
+    "path": "/destination/submittest",
+    "body": [
+      "serverName",
+      "databaseName",
+      "userId",
+      "password"
+    ],
+    "response": [
+      "requestId",
+      "result"
+    ]
+  },
+  "TerminateCustomer": {
+    "method": "POST",
+    "path": "/customers/terminate",
+    "body": [
+      "customerKey",
+      "agreedToTerminate"
+    ],
+    "response": [
+      "result"
+    ]
+  },
+  "UpdateAlertSettings": {
+    "method": "PATCH",
+    "path": "/alertsettings",
+    "body": [],
+    "response": [
+      "result"
+    ]
+  },
+  "UpdateAutoOrder": {
+    "method": "PUT",
+    "path": "/autoorder",
+    "body": [
+      "customFrequencyTy"
+    ],
+    "response": [
+      "result"
+    ]
+  },
+  "UpdateAutoOrderDetail": {
+    "method": "PUT",
+    "path": "/autoorder/detail",
+    "body": [
+      "autoOrderID",
+      "orderLine",
+      "itemID",
+      "qty",
+      "manualPriceEach",
+      "manualTaxablePriceEach",
+      "manualShippingPriceEach",
+      "manualBVEach",
+      "manualCVEach",
+      "description",
+      "periodDescriptionTy",
+      "priceEach",
+      "priceExt",
+      "bVEach",
+      "businessVolume",
+      "cVEach",
+      "commissionableVolume",
+      "dynamicKitItemID",
+      "reference1"
+    ],
+    "response": [
+      "result"
+    ]
+  },
+  "UpdateBill": {
+    "method": "PATCH",
+    "path": "/bill",
+    "body": [
+      "vendorBillID",
+      "customerID",
+      "customerKey",
+      "warehouseID",
+      "currencyCode",
+      "datePaymentDue",
+      "reference",
+      "dateReceived",
+      "amount",
+      "isOtherIncome",
+      "notes",
+      "payableType",
+      "taxablePeriodTy",
+      "taxablePeriodID"
+    ],
+    "response": [
+      "result"
+    ]
+  },
+  "UpdateCalendarItem": {
+    "method": "PATCH",
+    "path": "/calendar/item",
+    "body": [
+      "userID",
+      "calendarID",
+      "calendarItemID",
+      "calendarItemType",
+      "calendarItemStatusType",
+      "calendarItemPriorityType",
+      "subject",
+      "location",
+      "notes",
+      "startDate",
+      "endDate",
+      "timeZone",
+      "address1",
+      "address2",
+      "city",
+      "postalCode",
+      "contactInfo",
+      "contactPhone",
+      "contactPhoneType",
+      "contactEmail",
+      "eventHost",
+      "specialGuests",
+      "eventFlyer",
+      "eventCostInfo",
+      "eventConferenceCallOrWebinar",
+      "eventRegistrationInfo",
+      "eventTags",
+      "isShared"
+    ],
+    "response": [
+      "calendarID",
+      "calendarItemID",
+      "result"
+    ]
+  },
+  "UpdateCustomer": {
+    "method": "PATCH",
+    "path": "/customers",
+    "body": [
+      "customerID",
+      "firstName",
+      "lastName",
+      "company",
+      "customerType",
+      "customerStatus",
+      "email",
+      "phone",
+      "phone2",
+      "mobilePhone",
+      "fax",
+      "mainAddress1",
+      "mainAddress2",
+      "mainAddress3",
+      "mainCity",
+      "mainState",
+      "mainZip",
+      "mainCountry",
+      "mainCounty",
+      "mailAddress1",
+      "mailAddress2",
+      "mailAddress3",
+      "mailCity",
+      "mailZip",
+      "mailCounty",
+      "otherAddress1",
+      "otherAddress2",
+      "otherAddress3",
+      "otherCity",
+      "otherZip",
+      "otherCounty",
+      "canLogin",
+      "loginName",
+      "loginPassword",
+      "taxID",
+      "salesTaxID",
+      "salesTaxExemptExpireDate",
+      "birthDate",
+      "payableToName",
+      "defaultWarehouseID",
+      "date1",
+      "date2",
+      "date3",
+      "date4",
+      "date5",
+      "middleName",
+      "nameSuffix",
+      "binaryPlacementPreference",
+      "useBinaryHoldingTank",
+      "mainAddressVerified",
+      "mailAddressVerified",
+      "otherAddressVerified",
+      "customerKey",
+      "payableTy",
+      "taxIDTy",
+      "entryDate"
+    ],
+    "response": [
+      "result"
+    ]
+  },
+  "UpdateCustomerExtended": {
+    "method": "PATCH",
+    "path": "/customers/extended",
+    "body": [
+      "customerID",
+      "extendedGroupID",
+      "customerExtendedID",
+      "customerKey"
+    ],
+    "response": [
+      "result"
+    ]
+  },
+  "UpdateCustomerLead": {
+    "method": "PATCH",
+    "path": "/customerlead",
+    "body": [
+      "customerID",
+      "customerLeadID",
+      "firstName",
+      "lastName",
+      "middleName",
+      "company",
+      "phone",
+      "phone2",
+      "mobilePhone",
+      "fax",
+      "email",
+      "address1",
+      "address2",
+      "city",
+      "zip",
+      "birthDate",
+      "notes",
+      "customerKey"
+    ],
+    "response": [
+      "result"
+    ]
+  },
+  "UpdateDestination": {
+    "method": "PATCH",
+    "path": "/destination",
+    "body": [],
+    "response": [
+      "result"
+    ]
+  },
+  "UpdateExtendedDbEntity": {
+    "method": "PATCH",
+    "path": "/extendeddb",
+    "body": [
+      "entityNameToUpdate",
+      "schemaName",
+      "newEntityName",
+      "newEntitySetName",
+      "newIsLog",
+      "newMaxLogDays",
+      "newLogDateField",
+      "newNavigations",
+      "newProperties",
+      "propertiesToUpdate",
+      "propertiesToDelete"
+    ],
+    "response": [
+      "entity",
+      "result"
+    ]
+  },
+  "UpdateExtendedDbSettings": {
+    "method": "PATCH",
+    "path": "/extendeddbsettings",
+    "body": [],
+    "response": [
+      "result"
+    ]
+  },
+  "UpdateGuest": {
+    "method": "PATCH",
+    "path": "/guest",
+    "body": [
+      "guestID",
+      "customerID",
+      "customerKey",
+      "firstName",
+      "middleName",
+      "lastName",
+      "nameSuffix",
+      "company",
+      "guestStatus",
+      "address1",
+      "address2",
+      "address3",
+      "city",
+      "county",
+      "zip",
+      "phone",
+      "phone2",
+      "mobilePhone",
+      "email",
+      "date1",
+      "date2",
+      "date3",
+      "date4",
+      "date5",
+      "notes"
+    ],
+    "response": [
+      "result"
+    ]
+  },
+  "UpdateItem": {
+    "method": "PUT",
+    "path": "/item",
+    "body": [
+      "itemCode",
+      "description",
+      "weight",
+      "notes",
+      "availableInAllCountryRegions",
+      "taxedInAllCountryRegions",
+      "availableInAllWarehouses",
+      "isVirtual",
+      "itemTypeID",
+      "shortDetail",
+      "shortDetail2",
+      "shortDetail3",
+      "shortDetail4",
+      "longDetail",
+      "longDetail2",
+      "longDetail3",
+      "longDetail4",
+      "otherCheck1",
+      "otherCheck2",
+      "otherCheck3",
+      "otherCheck4",
+      "otherCheck5",
+      "field1",
+      "field2",
+      "field3",
+      "field4",
+      "field5",
+      "field6",
+      "field7",
+      "field8",
+      "field9",
+      "field10",
+      "hideFromSearch",
+      "isSubscriptionUpdate",
+      "isPointIncrement",
+      "isGroupMaster",
+      "suppressGroupMaster"
+    ],
+    "response": [
+      "result"
+    ]
+  },
+  "UpdateOrder": {
+    "method": "PATCH",
+    "path": "/orders",
+    "body": [
+      "orderID",
+      "orderDate",
+      "declineCount",
+      "orderTy",
+      "orderStatus",
+      "priceTy",
+      "total",
+      "subTotal",
+      "shipping",
+      "orderTax",
+      "shippingTax",
+      "fedShippingTax",
+      "stateShippingTax",
+      "cityShippingTax",
+      "cityLocalShippingTax",
+      "countyShippingTax",
+      "countyLocalShippingTax",
+      "manualTaxRate",
+      "totalTax",
+      "currencyCode",
+      "paymentMethod",
+      "warehouseID",
+      "batchID",
+      "previousBalance",
+      "overrideShipping",
+      "overrideTax",
+      "businessVolume",
+      "commissionableVolume",
+      "discount",
+      "discountPercent",
+      "weight",
+      "sourcety",
+      "notes",
+      "usr",
+      "firstName",
+      "lastName",
+      "company",
+      "address1",
+      "address2",
+      "city",
+      "zip",
+      "email",
+      "phone",
+      "suppressPackSlipPrice",
+      "shipMethodID",
+      "autoOrderID",
+      "createdBy",
+      "returnOrderID",
+      "orderRankID",
+      "orderPayRankID",
+      "addressIsVerified",
+      "county",
+      "isRMA",
+      "backOrderFromID",
+      "creditsEarned",
+      "totalFedTax",
+      "totalStateTax",
+      "manualShippingTax",
+      "replacementOrderID",
+      "lockedDate",
+      "commissionedDate",
+      "flag1",
+      "flag2",
+      "flag3",
+      "originalWarehouseID",
+      "pickupName",
+      "transferToID",
+      "isCommissionable",
+      "fulfilledBy",
+      "creditApplied",
+      "shippedDate",
+      "taxLockDate",
+      "totalTaxable",
+      "returnCategoryID",
+      "replacementCategoryID",
+      "calculatedShipping",
+      "handlingFee",
+      "orderProcessTy",
+      "actualCarrier",
+      "parentOrderID",
+      "customerTy",
+      "reference",
+      "middleName",
+      "nameSuffix",
+      "address3",
+      "partyID",
+      "trackingNumber1",
+      "trackingNumber2",
+      "trackingNumber3",
+      "trackingNumber4",
+      "trackingNumber5",
+      "webCarrierID",
+      "webCarrierID2",
+      "webCarrierID3",
+      "webCarrierID4",
+      "webCarrierID5",
+      "other11",
+      "other12",
+      "other13",
+      "other14",
+      "other15",
+      "other16",
+      "other17",
+      "other18",
+      "other19",
+      "other20",
+      "transferToKey",
+      "orderKey",
+      "returnOrderKey",
+      "replacementOrderKey",
+      "parentOrderKey",
+      "backOrderFromKey"
+    ],
+    "response": [
+      "result"
+    ]
+  },
+  "UpdateOrderDetail": {
+    "method": "PUT",
+    "path": "/orders/detail",
+    "body": [
+      "itemID",
+      "itemCode",
+      "orderLine",
+      "description",
+      "qty",
+      "priceEach",
+      "priceExt",
+      "bVEach",
+      "businessVolume",
+      "cVEach",
+      "commissionableVolume",
+      "shippingPriceEach",
+      "chargeShippingOn",
+      "isTaxedInRegion",
+      "isTaxedInRegionFed",
+      "isTaxedInRegionState",
+      "taxablePriceEach",
+      "taxable",
+      "combinedTax",
+      "fedTax",
+      "stateTax",
+      "cityTax",
+      "cityLocalTax",
+      "countyTax",
+      "countyLocalTax",
+      "manualTax",
+      "isBackOrder",
+      "weightEach",
+      "other1Each",
+      "other2Each",
+      "other3Each",
+      "other4Each",
+      "other5Each",
+      "other6Each",
+      "other7Each",
+      "other8Each",
+      "other9Each",
+      "other10Each",
+      "discountExt",
+      "originalTaxableEach",
+      "originalBVEach",
+      "originalCVEach",
+      "stateTaxable",
+      "isStateTaxOverride",
+      "dynamicKitItemID",
+      "handlingFee",
+      "reference1",
+      "orderKey"
+    ],
+    "response": [
+      "result"
+    ]
+  },
+  "UpdateParty": {
+    "method": "PUT",
+    "path": "/party",
+    "body": [
+      "partyID",
+      "partyType",
+      "partyStatusType",
+      "hostID",
+      "distributorID",
+      "startDate",
+      "closeDate",
+      "description",
+      "eventStart",
+      "eventEnd",
+      "languageID",
+      "information",
+      "bookingPartyID",
+      "field1",
+      "field2",
+      "field3",
+      "field4",
+      "field5",
+      "timeZoneID",
+      "virtualMeetingLink",
+      "partyShoppingUrl",
+      "partyExternalID"
+    ],
+    "response": [
+      "result"
+    ]
+  },
+  "UpdateReIndexSettings": {
+    "method": "PATCH",
+    "path": "/reindexsettings",
+    "body": [],
+    "response": [
+      "result"
+    ]
+  },
+  "UpdateResourceSet": {
+    "method": "PATCH",
+    "path": "/resourceset",
+    "body": [],
+    "response": [
+      "resourceSetID",
+      "className",
+      "description",
+      "namespace",
+      "subscriptionKey",
+      "result"
+    ]
+  },
+  "UpdateResourceSetBannerItem": {
+    "method": "PATCH",
+    "path": "/resourceitem/banner",
+    "body": [],
+    "response": [
+      "resourceSetID",
+      "cultureCode",
+      "resourceName",
+      "result"
+    ]
+  },
+  "UpdateResourceSetBooleanItem": {
+    "method": "PATCH",
+    "path": "/resourceitem/bool",
+    "body": [],
+    "response": [
+      "resourceSetID",
+      "cultureCode",
+      "resourceName",
+      "result"
+    ]
+  },
+  "UpdateResourceSetCarouselItem": {
+    "method": "PATCH",
+    "path": "/resourceitem/carousel",
+    "body": [],
+    "response": [
+      "resourceSetID",
+      "cultureCode",
+      "resourceName",
+      "result"
+    ]
+  },
+  "UpdateResourceSetDataSetItem": {
+    "method": "PATCH",
+    "path": "/resourceitem/dataset",
+    "body": [],
+    "response": [
+      "resourceSetID",
+      "cultureCode",
+      "resourceName",
+      "result"
+    ]
+  },
+  "UpdateResourceSetDateItem": {
+    "method": "PATCH",
+    "path": "/resourceitem/date",
+    "body": [],
+    "response": [
+      "resourceSetID",
+      "cultureCode",
+      "resourceName",
+      "result"
+    ]
+  },
+  "UpdateResourceSetDecimalItem": {
+    "method": "PATCH",
+    "path": "/resourceitem/decimal",
+    "body": [],
+    "response": [
+      "resourceSetID",
+      "cultureCode",
+      "resourceName",
+      "result"
+    ]
+  },
+  "UpdateResourceSetDropDownItem": {
+    "method": "PATCH",
+    "path": "/resourceitem/dropdown",
+    "body": [],
+    "response": [
+      "resourceSetID",
+      "cultureCode",
+      "resourceName",
+      "result"
+    ]
+  },
+  "UpdateResourceSetEnvironment": {
+    "method": "PATCH",
+    "path": "/resourceset/environment",
+    "body": [],
+    "response": [
+      "resourceSetID",
+      "environmentCode",
+      "description",
+      "version",
+      "scheduledVersion",
+      "scheduledVersionDate",
+      "result"
+    ]
+  },
+  "UpdateResourceSetGroup": {
+    "method": "PATCH",
+    "path": "/resourceset/group",
+    "body": [],
+    "response": [
+      "resourceSetID",
+      "resourceGroupID",
+      "decription",
+      "result"
+    ]
+  },
+  "UpdateResourceSetImageItem": {
+    "method": "PATCH",
+    "path": "/resourceitem/image",
+    "body": [],
+    "response": [
+      "resourceSetID",
+      "cultureCode",
+      "resourceName",
+      "result"
+    ]
+  },
+  "UpdateResourceSetIntItem": {
+    "method": "PATCH",
+    "path": "/resourceitem/int",
+    "body": [],
+    "response": [
+      "resourceSetID",
+      "cultureCode",
+      "resourceName",
+      "result"
+    ]
+  },
+  "UpdateResourceSetTextItem": {
+    "method": "PATCH",
+    "path": "/resourceitem/text",
+    "body": [],
+    "response": [
+      "resourceSetID",
+      "cultureCode",
+      "resourceName",
+      "result"
+    ]
+  },
+  "UpdateResourceSetWidgetItem": {
+    "method": "PATCH",
+    "path": "/resourceitem/widget",
+    "body": [],
+    "response": [
+      "resourceSetID",
+      "cultureCode",
+      "resourceName",
+      "result"
+    ]
+  },
+  "UpdateTableFilterSettings": {
+    "method": "PATCH",
+    "path": "/filtergroup/update",
+    "body": [
+      "destinationId",
+      "filterGroupId",
+      "columnName",
+      "schemaName",
+      "tableName",
+      "filterValue"
+    ],
+    "response": [
+      "result"
+    ]
+  },
+  "UpdateTableSettings": {
+    "method": "PATCH",
+    "path": "/tablesettings",
+    "body": [],
+    "response": [
+      "result"
+    ]
+  },
+  "UpdateWebCategory": {
+    "method": "PUT",
+    "path": "/webcategory",
+    "body": [
+      "webID",
+      "categoryID",
+      "description"
+    ],
+    "response": [
+      "categoryID",
+      "webID",
+      "description",
+      "result"
+    ]
+  },
+  "Validate": {
+    "unavailable": true
+  },
+  "ValidateCreditCardToken": {
+    "method": "POST",
+    "path": "/payment/validate/token",
+    "body": [
+      "creditCardIdentifier",
+      "expirationYear",
+      "expirationMonth",
+      "cvcCode",
+      "billingName",
+      "billingAddress1",
+      "billingAddress2",
+      "billingCity",
+      "billingZip",
+      "customerID",
+      "customerKey",
+      "orderID",
+      "orderKey",
+      "validateTokenOnFile",
+      "accountOnFile",
+      "warehouseID",
+      "currencyCode",
+      "email",
+      "phone",
+      "clientIpAddress"
+    ],
+    "response": [
+      "authorizationCode",
+      "message",
+      "success",
+      "displayMessage",
+      "result"
+    ]
+  },
+  "ValidateWalletAccount": {
+    "method": "POST",
+    "path": "/payment/validate/wallet",
+    "body": [
+      "walletAccountNumber",
+      "walletTy",
+      "memo",
+      "customerID",
+      "customerKey",
+      "orderID",
+      "orderKey",
+      "validateWalletAccountOnFile",
+      "walletAccountType",
+      "warehouseID",
+      "email",
+      "phone",
+      "currencyCode",
+      "clientIpAddress",
+      "billingName",
+      "billingAddress1",
+      "billingAddress2",
+      "billingCity",
+      "billingZip",
+      "amount"
+    ],
+    "response": [
+      "authorizationCode",
+      "message",
+      "success",
+      "displayMessage",
+      "result"
+    ]
+  },
+  "VerifyAddress": {
+    "method": "POST",
+    "path": "/address/verify",
+    "body": [
+      "address",
+      "city",
+      "zip"
+    ],
+    "response": [
+      "address",
+      "city",
+      "county",
+      "state",
+      "zip",
+      "country",
+      "result"
+    ]
+  },
+  "VoidPayments": {
+    "method": "POST",
+    "path": "/payment/void",
+    "body": [
+      "paymentIdStart",
+      "paymentIdEnd",
+      "memo"
+    ],
+    "response": [
+      "result"
+    ]
+  }
+}

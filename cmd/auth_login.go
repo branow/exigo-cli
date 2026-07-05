@@ -31,8 +31,8 @@ func newAuthLoginCmd(f *cmdutil.Factory) *cobra.Command {
   # Non-interactive login for CI, reading the password from stdin
   echo "$EXIGO_PASSWORD" | exigo auth login --login-name svc-account --company ACME --password-stdin
 
-  # Log in under a named profile against a sandbox SOAP endpoint
-  exigo auth login --profile sandbox --login-name dev --company SANDBOX --base-url https://sandbox.exigo.com/3.0/ExigoApi.asmx --password-stdin`,
+  # Log in under a named profile against a sandbox REST endpoint
+  exigo auth login --profile sandbox --login-name dev --company SANDBOX --base-url https://sandboxapi6.exigo.com/3.0 --password-stdin`,
 		RunE: func(cmd *cobra.Command, args []string) error {
 			return runAuthLogin(f, loginName, companyCode, baseURL, passwordStdin)
 		},
@@ -40,7 +40,7 @@ func newAuthLoginCmd(f *cmdutil.Factory) *cobra.Command {
 
 	cmd.Flags().StringVar(&loginName, "login-name", "", "Exigo login name")
 	cmd.Flags().StringVar(&companyCode, "company", "", "Exigo company (tenant) code")
-	cmd.Flags().StringVar(&baseURL, "base-url", "", "Exigo SOAP endpoint URL (default "+exigoapi.DefaultEndpoint+")")
+	cmd.Flags().StringVar(&baseURL, "base-url", "", "Exigo REST base URL (default https://<company>-api.exigo.com/3.0)")
 	cmd.Flags().BoolVar(&passwordStdin, "password-stdin", false, "read the password from stdin")
 	return cmd
 }
@@ -57,7 +57,7 @@ func runAuthLogin(f *cmdutil.Factory, loginName, companyCode, baseURL string, pa
 	if err != nil {
 		return err
 	}
-	baseURL, err = resolveBaseURL(f, reader, baseURL)
+	baseURL, err = resolveBaseURL(f, reader, baseURL, companyCode)
 	if err != nil {
 		return err
 	}
@@ -76,6 +76,9 @@ func runAuthLogin(f *cmdutil.Factory, loginName, companyCode, baseURL string, pa
 		Company: companyCode,
 		Output:  f.Config.OutputFormat("", profile),
 	})
+	if err := f.Config.SwitchProfile(profile); err != nil {
+		return err
+	}
 	if err := f.Config.Save(); err != nil {
 		return err
 	}
@@ -108,19 +111,20 @@ func resolvePromptValue(f *cmdutil.Factory, reader *bufio.Reader, flagValue, lab
 	return value, nil
 }
 
-// resolveBaseURL returns flagValue if set, otherwise prompts for the SOAP
-// endpoint (offering exigoapi.DefaultEndpoint as the default), otherwise
-// falls back to exigoapi.DefaultEndpoint directly — unlike the other
-// login values, a missing endpoint is never a validation error since the
-// production endpoint is a documented, sensible default.
-func resolveBaseURL(f *cmdutil.Factory, reader *bufio.Reader, flagValue string) (string, error) {
+// resolveBaseURL returns flagValue if set, otherwise prompts for the REST
+// base URL (offering the company's default host), otherwise falls back to
+// the company default directly — unlike the other login values, a missing
+// endpoint is never a validation error since the per-company production
+// host is a documented, sensible default.
+func resolveBaseURL(f *cmdutil.Factory, reader *bufio.Reader, flagValue, companyCode string) (string, error) {
 	if flagValue != "" {
 		return flagValue, nil
 	}
+	defaultURL := exigoapi.DefaultEndpoint(companyCode)
 	if !f.IOStreams.CanPrompt() {
-		return exigoapi.DefaultEndpoint, nil
+		return defaultURL, nil
 	}
-	fmt.Fprintf(f.IOStreams.Out, "SOAP endpoint URL [%s]: ", exigoapi.DefaultEndpoint)
+	fmt.Fprintf(f.IOStreams.Out, "REST base URL [%s]: ", defaultURL)
 	line, err := reader.ReadString('\n')
 	if err != nil && err != io.EOF {
 		return "", err
@@ -128,19 +132,20 @@ func resolveBaseURL(f *cmdutil.Factory, reader *bufio.Reader, flagValue string) 
 	if value := strings.TrimSpace(line); value != "" {
 		return value, nil
 	}
-	return exigoapi.DefaultEndpoint, nil
+	return defaultURL, nil
 }
 
 // resolvePassword reads the password from stdin when passwordStdin is set,
 // otherwise prompts with hidden input on a real terminal, otherwise fails
-// with a validation error.
+// with a validation error. Only the trailing line ending is stripped —
+// whitespace can be part of the password itself.
 func resolvePassword(f *cmdutil.Factory, reader *bufio.Reader, passwordStdin bool) (string, error) {
 	if passwordStdin {
 		data, err := io.ReadAll(reader)
 		if err != nil {
 			return "", err
 		}
-		return strings.TrimSpace(string(data)), nil
+		return nonEmptyPassword(string(data))
 	}
 	if stdin := f.IOStreams.StdinFd(); stdin != nil && f.IOStreams.CanPrompt() {
 		fmt.Fprint(f.IOStreams.Out, "Password: ")
@@ -149,7 +154,15 @@ func resolvePassword(f *cmdutil.Factory, reader *bufio.Reader, passwordStdin boo
 		if err != nil {
 			return "", err
 		}
-		return strings.TrimSpace(string(bytePassword)), nil
+		return nonEmptyPassword(string(bytePassword))
 	}
 	return "", &cmdutil.ValidationError{Message: "password is required (use --password-stdin in non-interactive mode)"}
+}
+
+func nonEmptyPassword(raw string) (string, error) {
+	password := strings.TrimRight(raw, "\r\n")
+	if password == "" {
+		return "", &cmdutil.ValidationError{Message: "password is required"}
+	}
+	return password, nil
 }

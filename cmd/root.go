@@ -4,6 +4,8 @@
 package cmd
 
 import (
+	"fmt"
+
 	"github.com/spf13/cobra"
 
 	"exigo-cli/internal/cmdutil"
@@ -34,6 +36,9 @@ func NewRootCmd(f *cmdutil.Factory) *cobra.Command {
 		SilenceUsage:  true,
 		SilenceErrors: true,
 		PersistentPreRunE: func(cmd *cobra.Command, args []string) error {
+			if f.Output != "" && !validOutputFormat(f.Output) {
+				return &cmdutil.ValidationError{Message: fmt.Sprintf("invalid --output %q (expected table or json)", f.Output)}
+			}
 			f.IOStreams.SetNoColor(noColor)
 			f.IOStreams.SetNoInput(f.NoInput)
 			return nil
@@ -83,13 +88,13 @@ func newRealFactory() (*cmdutil.Factory, error) {
 
 func newClient(f *cmdutil.Factory) (exigoapi.Client, error) {
 	profile := f.ActiveProfile()
-	endpoint := f.Config.BaseURL("", profile)
-	if endpoint == "" {
-		endpoint = exigoapi.DefaultEndpoint
-	}
 	creds, err := f.CredentialsStore.Get(profile)
 	if err != nil {
 		return nil, cmdutil.ErrNotLoggedIn
+	}
+	endpoint := f.Config.BaseURL("", profile)
+	if endpoint == "" {
+		endpoint = exigoapi.DefaultEndpoint(creds.Company)
 	}
 	return exigoapi.New(endpoint, creds), nil
 }

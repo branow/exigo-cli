@@ -3,15 +3,26 @@ package config
 import (
 	"os"
 	"path/filepath"
+	"runtime"
 
 	"gopkg.in/yaml.v3"
 )
 
-// Dir returns the base directory exigo-cli stores its files under,
-// honoring XDG_CONFIG_HOME and falling back to ~/.config.
+// Dir returns the base directory exigo-cli stores its files under:
+// XDG_CONFIG_HOME when set, the platform's native config directory on
+// Windows (%AppData%\exigo), and ~/.config/exigo elsewhere — macOS
+// included, following the ~/.config convention of CLI tools like gh
+// rather than ~/Library/Application Support.
 func Dir() (string, error) {
 	if xdg := os.Getenv("XDG_CONFIG_HOME"); xdg != "" {
 		return filepath.Join(xdg, "exigo"), nil
+	}
+	if runtime.GOOS == "windows" {
+		dir, err := os.UserConfigDir()
+		if err != nil {
+			return "", err
+		}
+		return filepath.Join(dir, "exigo"), nil
 	}
 	home, err := os.UserHomeDir()
 	if err != nil {
