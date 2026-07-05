@@ -10,10 +10,10 @@ import (
 
 	"github.com/spf13/cobra"
 
-	"exigo-cli/internal/cmdutil"
-	"exigo-cli/internal/exigoapi"
-	"exigo-cli/internal/exigoapi/catalog"
-	"exigo-cli/internal/output"
+	"github.com/branow/exigo-cli/internal/cmdutil"
+	"github.com/branow/exigo-cli/internal/exigoapi"
+	"github.com/branow/exigo-cli/internal/exigoapi/catalog"
+	"github.com/branow/exigo-cli/internal/output"
 )
 
 // newAPICmd builds "exigo api", a generic invoker for any of the Exigo

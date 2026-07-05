@@ -4,7 +4,7 @@ import (
 	"errors"
 	"strings"
 
-	"exigo-cli/internal/exigoapi"
+	"github.com/branow/exigo-cli/internal/exigoapi"
 )
 
 // Exit codes, per docs/DESIGN.md's exit-code table.

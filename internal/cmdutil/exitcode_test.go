@@ -4,8 +4,8 @@ import (
 	"fmt"
 	"testing"
 
-	"exigo-cli/internal/cmdutil"
-	"exigo-cli/internal/exigoapi"
+	"github.com/branow/exigo-cli/internal/cmdutil"
+	"github.com/branow/exigo-cli/internal/exigoapi"
 )
 
 func TestExitCode(t *testing.T) {

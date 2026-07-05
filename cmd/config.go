@@ -9,9 +9,9 @@ import (
 
 	"github.com/spf13/cobra"
 
-	"exigo-cli/internal/cmdutil"
-	"exigo-cli/internal/iostreams"
-	"exigo-cli/internal/output"
+	"github.com/branow/exigo-cli/internal/cmdutil"
+	"github.com/branow/exigo-cli/internal/iostreams"
+	"github.com/branow/exigo-cli/internal/output"
 )
 
 const (

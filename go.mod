@@ -1,4 +1,4 @@
-module exigo-cli
+module github.com/branow/exigo-cli
 
 go 1.25.0
 

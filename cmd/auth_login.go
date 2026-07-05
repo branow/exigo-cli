@@ -12,10 +12,10 @@ import (
 	"github.com/spf13/cobra"
 	"golang.org/x/term"
 
-	"exigo-cli/internal/cmdutil"
-	"exigo-cli/internal/config"
-	"exigo-cli/internal/credentials"
-	"exigo-cli/internal/exigoapi"
+	"github.com/branow/exigo-cli/internal/cmdutil"
+	"github.com/branow/exigo-cli/internal/config"
+	"github.com/branow/exigo-cli/internal/credentials"
+	"github.com/branow/exigo-cli/internal/exigoapi"
 )
 
 // newAuthLoginCmd builds "exigo auth login", supporting both interactive

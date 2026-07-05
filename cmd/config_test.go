@@ -4,8 +4,8 @@ import (
 	"strings"
 	"testing"
 
-	"exigo-cli/cmd"
-	"exigo-cli/internal/cmdutil"
+	"github.com/branow/exigo-cli/cmd"
+	"github.com/branow/exigo-cli/internal/cmdutil"
 )
 
 func TestConfigSetGetRoundTrip(t *testing.T) {

@@ -16,8 +16,8 @@ import (
 	"strings"
 	"time"
 
-	"exigo-cli/internal/credentials"
-	"exigo-cli/internal/exigoapi/catalog"
+	"github.com/branow/exigo-cli/internal/credentials"
+	"github.com/branow/exigo-cli/internal/exigoapi/catalog"
 )
 
 const requestTimeout = 30 * time.Second

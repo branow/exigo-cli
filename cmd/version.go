@@ -5,7 +5,7 @@ import (
 
 	"github.com/spf13/cobra"
 
-	"exigo-cli/internal/cmdutil"
+	"github.com/branow/exigo-cli/internal/cmdutil"
 )
 
 // version is the exigo-cli release version. It is a plain variable rather

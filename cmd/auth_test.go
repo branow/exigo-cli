@@ -6,9 +6,9 @@ import (
 	"strings"
 	"testing"
 
-	"exigo-cli/cmd"
-	"exigo-cli/internal/cmdutil"
-	"exigo-cli/internal/credentials"
+	"github.com/branow/exigo-cli/cmd"
+	"github.com/branow/exigo-cli/internal/cmdutil"
+	"github.com/branow/exigo-cli/internal/credentials"
 )
 
 func TestAuthLoginNonInteractiveThenStatusThenLogout(t *testing.T) {

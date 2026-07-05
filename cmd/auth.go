@@ -3,7 +3,7 @@ package cmd
 import (
 	"github.com/spf13/cobra"
 
-	"exigo-cli/internal/cmdutil"
+	"github.com/branow/exigo-cli/internal/cmdutil"
 )
 
 // newAuthCmd groups the auth login/logout/status/switch subcommands.

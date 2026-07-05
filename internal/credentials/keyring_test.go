@@ -7,7 +7,7 @@ import (
 
 	"github.com/zalando/go-keyring"
 
-	"exigo-cli/internal/iostreams"
+	"github.com/branow/exigo-cli/internal/iostreams"
 )
 
 // A profile absent from the keychain must still resolve via the plaintext
