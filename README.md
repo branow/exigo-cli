@@ -1,109 +1,104 @@
 # exigo-cli
 
-A command-line interface for the [Exigo](https://www.exigo.com/) direct-selling
-back-office API.
+A command-line interface for the [Exigo](https://www.exigo.com/)
+direct-selling back-office REST API.
 
-## Status
+`exigo` can invoke any of the 252 operations documented in the Exigo API —
+`GetCustomers`, `CreateOrder`, `CalculateOrder`, ... — by name, from your
+terminal or a script, without writing any integration code.
 
-Authentication/profile management, config, and a generic
-`exigo api <Operation>` escape hatch for the Exigo REST API are implemented
-and tested against a mocked server. 252 operations are catalogued from the
-live API docs and embedded in the binary
-([`internal/exigoapi/catalog/rest-catalog.json`](internal/exigoapi/catalog/rest-catalog.json));
-246 have REST bindings, and 6 that the docs mark "Rest call not available
-for this method yet" (`AuthorizeOnlyCreditCardToken`,
-`AuthorizeOnlyCreditCardTokenOnFile`, `ChargePriorAuthorization`,
-`CreateTableFilterSettings`, `ProcessTransaction`, `Validate`) are reported
-with a clear error and exit code 3.
-Resource-specific commands (`customer`, `order`, etc.) are not yet built —
-see [`docs/DESIGN.md`](docs/DESIGN.md) for why, and what's planned once
-sandbox credentials are available.
+- Credentials are stored in the OS keychain (macOS Keychain, Windows
+  Credential Manager, Linux Secret Service), never in plain files.
+- Named profiles switch between tenants and environments (production,
+  sandbox).
+- JSON output, meaningful exit codes, and non-interactive flags make it
+  scriptable; shell completion covers commands and operation names.
 
-## Install
+## Installation
 
-### Prebuilt binaries
-
-Download the archive for your platform from the
-[latest release](https://github.com/branow/exigo-cli/releases/latest) —
-macOS, Linux, and Windows, both amd64 and arm64 — unpack it, and put the
-`exigo` binary on your `PATH`:
+Download the archive for your platform (macOS, Linux, Windows; amd64 and
+arm64) from the [latest release](https://github.com/branow/exigo-cli/releases/latest),
+unpack it, and put the `exigo` binary on your `PATH`:
 
 ```sh
 tar xzf exigo_*_darwin_arm64.tar.gz   # .zip on Windows
 sudo mv exigo /usr/local/bin/
 ```
 
-`checksums.txt` on the release page verifies the download
-(`shasum -c checksums.txt --ignore-missing`).
-
-### With Go
+Alternatively, with Go 1.25+:
 
 ```sh
-go install github.com/branow/exigo-cli@latest
+go install github.com/branow/exigo-cli@latest   # installs as "exigo-cli"
 ```
 
-Note that `go install` names the binary `exigo-cli` (after the module);
-rename it to `exigo` if you prefer the short form.
+or build from a checkout with `go build -o exigo .`
 
-### From source
-
-Requires Go 1.25+.
+## Quick start
 
 ```sh
-go build -o exigo .
+# Log in: prompts for login name, company, REST base URL, and password,
+# then verifies the credentials against the API before storing them.
+exigo auth login
+
+# Call an operation
+exigo api GetCustomers -f customerID=42
 ```
+
+The base URL defaults to the production host
+`https://<company>-api.exigo.com/3.0`; point it at a sandbox host at the
+login prompt or with `--base-url`.
 
 ## Usage
 
+### Calling API operations
+
 ```sh
-# Log in (prompts for login name, password, company, and the REST base URL,
-# defaulting to https://<company>-api.exigo.com/3.0). The credentials are
-# verified with a cheap read-only API call before being stored — pass
-# --no-verify to skip that (e.g. offline).
-exigo auth login
-
-# Or non-interactively, e.g. for CI
-echo "$EXIGO_PASSWORD" | exigo auth login --login-name svc-account --company ACME --password-stdin
-
-# Check who's logged in
-exigo auth status
-
-# Invoke any named REST operation directly. Field names use the documented
-# camelCase but match case-insensitively; values parse as JSON when they
-# look like it (42 → number, true → bool), else as strings. List all
-# catalogued operation names with `exigo api --list`.
+exigo api --list                        # all 252 operation names
 exigo api GetCustomers -f customerID=42
 exigo api CreateCustomer -f firstName=Jane -f lastName=Doe -f email=jane@example.com
-
-# Requests with nested values (e.g. an order's detail lines) via --input
 exigo api CreateOrder --input order.json
+```
 
-# Manage preferences
+The operation name (case-insensitive) routes to its documented REST
+endpoint: `-f key=value` fields become query parameters for GET operations
+and the JSON request body otherwise. Values that look like JSON are typed
+(`42` a number, `true` a boolean, `[1,2]` an array); everything else is a
+string. `--input file.json` (or `--input -` for stdin) sends a full JSON
+object — use it for nested requests such as an order's detail lines.
+
+### Profiles and configuration
+
+```sh
+exigo auth login --profile sandbox --base-url https://sandboxapi1.exigo.com/3.0
+exigo auth switch --profile sandbox
+exigo auth status
 exigo config list
 exigo config set output json
 ```
 
-The operation name routes to its REST endpoint via the embedded catalog:
-GET operations send fields as query parameters, everything else sends a
-JSON body. Requests authenticate with HTTP Basic auth as
-`login@company`. The base URL is per profile — override the per-company
-default with `--base-url` at login, `EXIGO_BASE_URL`, or config.
+Each profile stores a base URL, company, and preferred output format.
+Settings resolve as flags > environment variables (`EXIGO_PROFILE`,
+`EXIGO_BASE_URL`, `EXIGO_COMPANY`, `EXIGO_OUTPUT`) > config file
+(`~/.config/exigo/config.yml`; `%AppData%\exigo\config.yml` on Windows) >
+defaults.
 
-Run `exigo --help` or `exigo <command> --help` for full usage, and see
-`docs/DESIGN.md` for the exit-code scheme and command conventions. Shell
-completion (`exigo completion ...`) completes operation names from the
-catalog.
+### Scripting
 
-## How the REST catalog is generated
+Log in non-interactively and rely on exit codes:
 
-[`internal/exigoapi/catalog/rest-catalog.json`](internal/exigoapi/catalog/rest-catalog.json)
-— the method, path, and documented field names per operation — is distilled
-from a crawl of the live Exigo API docs. The crawl output, the full SOAP
-schema reference derived from it, and the generation scripts are local
-research artifacts (`research/`, `api-catalog/`, `scripts/`, all
-gitignored); only the distilled JSON is committed, embedded into the
-binary via `go:embed`. Treat it as generated — regenerate from a fresh
-crawl rather than editing it by hand.
+```sh
+echo "$EXIGO_PASSWORD" | exigo auth login --login-name svc --company ACME --password-stdin
+```
+
+| Exit code | Meaning |
+|---|---|
+| 0 | success |
+| 1 | generic failure, including business errors reported by the API |
+| 2 | cancelled by the user |
+| 3 | validation error (bad flags, unknown operation) |
+| 4 | authentication failure (not logged in, HTTP 401/403) |
+| 5 | not found (HTTP 404) |
+| 6 | rate-limited or unavailable (HTTP 429, 5xx after retries) |
 
 ## Development
 
@@ -113,8 +108,11 @@ go vet ./...
 go test ./...
 ```
 
-No live-API tests exist yet — they're blocked on real Exigo sandbox
-credentials.
+Architecture, command conventions, and design decisions are described in
+[`docs/DESIGN.md`](docs/DESIGN.md). The embedded operation catalog
+([`rest-catalog.json`](internal/exigoapi/catalog/rest-catalog.json)) is
+generated from a crawl of the live Exigo API docs — treat it as a build
+artifact, not something to edit by hand.
 
 ## License
 
