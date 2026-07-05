@@ -2,6 +2,7 @@ package catalog_test
 
 import (
 	"net/http"
+	"regexp"
 	"testing"
 
 	"exigo-cli/internal/exigoapi/catalog"
@@ -66,6 +67,30 @@ func TestCanonicalField(t *testing.T) {
 				t.Errorf("CanonicalField(%q) = %q, want %q", c.field, got, c.want)
 			}
 		})
+	}
+}
+
+// Every available endpoint must have a known method and a plain URL path.
+// Guards against generation artifacts leaking into the embedded catalog —
+// a doc-crawl bug once glued the sample's "Authorization:" header line
+// onto 16 paths.
+func TestCataloguedEndpointsAreWellFormed(t *testing.T) {
+	pathShape := regexp.MustCompile(`^(/[A-Za-z0-9._-]+)+$`)
+	methods := map[string]bool{
+		http.MethodGet: true, http.MethodPost: true, http.MethodPut: true,
+		http.MethodPatch: true, http.MethodDelete: true,
+	}
+	for _, name := range catalog.Operations() {
+		endpoint, _ := catalog.Lookup(name)
+		if endpoint.Unavailable {
+			continue
+		}
+		if !methods[endpoint.Method] {
+			t.Errorf("operation %s has unknown method %q", name, endpoint.Method)
+		}
+		if !pathShape.MatchString(endpoint.Path) {
+			t.Errorf("operation %s has a malformed path %q", name, endpoint.Path)
+		}
 	}
 }
 

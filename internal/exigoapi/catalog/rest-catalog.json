@@ -1669,7 +1669,7 @@
   },
   "GetAdminWhitelist": {
     "method": "GET",
-    "path": "/whitelist/adminAuthorization:",
+    "path": "/whitelist/admin",
     "response": [
       "whitelistRanges",
       "result"
@@ -1677,7 +1677,7 @@
   },
   "GetAlertSettings": {
     "method": "GET",
-    "path": "/alertsettingsAuthorization:",
+    "path": "/alertsettings",
     "response": [
       "alertOptIn",
       "alertEmail",
@@ -1847,7 +1847,7 @@
   },
   "GetCountryRegions": {
     "method": "GET",
-    "path": "/country/regionsAuthorization:",
+    "path": "/country/regions",
     "response": [
       "countries",
       "selectedCountry",
@@ -1901,7 +1901,7 @@
   },
   "GetCustomerFolders": {
     "method": "GET",
-    "path": "/folderAuthorization:",
+    "path": "/folder",
     "response": [
       "folderCount",
       "parentFolderID",
@@ -2063,7 +2063,7 @@
   },
   "GetDestinations": {
     "method": "GET",
-    "path": "/destinationAuthorization:",
+    "path": "/destination",
     "response": [
       "destinations",
       "result"
@@ -2130,7 +2130,7 @@
   },
   "GetExtendedDbSettings": {
     "method": "GET",
-    "path": "/extendeddbsettingsAuthorization:",
+    "path": "/extendeddbsettings",
     "response": [
       "excludedSchemas",
       "result"
@@ -2166,7 +2166,7 @@
   },
   "GetFilterGroup": {
     "method": "GET",
-    "path": "/filtergroupAuthorization:",
+    "path": "/filtergroup",
     "response": [
       "filterGroups",
       "result"
@@ -2174,7 +2174,7 @@
   },
   "GetGuests": {
     "method": "GET",
-    "path": "/guestAuthorization:",
+    "path": "/guest",
     "response": [
       "guests",
       "result"
@@ -2397,7 +2397,7 @@
   },
   "GetReIndexSettings": {
     "method": "GET",
-    "path": "/reindexsettingsAuthorization:",
+    "path": "/reindexsettings",
     "response": [
       "reIndexStartTime",
       "reIndexMaxDuration",
@@ -2408,7 +2408,7 @@
   },
   "GetReleases": {
     "method": "GET",
-    "path": "/resourceset/releaseAuthorization:",
+    "path": "/resourceset/release",
     "response": [
       "releases",
       "result"
@@ -2416,7 +2416,7 @@
   },
   "GetResourceSetCultures": {
     "method": "GET",
-    "path": "/resourceset/cultureAuthorization:",
+    "path": "/resourceset/culture",
     "response": [
       "cultures",
       "result"
@@ -2424,7 +2424,7 @@
   },
   "GetResourceSetEnvironments": {
     "method": "GET",
-    "path": "/resourceset/environmentAuthorization:",
+    "path": "/resourceset/environment",
     "response": [
       "environments",
       "result"
@@ -2432,7 +2432,7 @@
   },
   "GetResourceSetGroups": {
     "method": "GET",
-    "path": "/resourceset/groupAuthorization:",
+    "path": "/resourceset/group",
     "response": [
       "groups",
       "result"
@@ -2440,7 +2440,7 @@
   },
   "GetResourceSetItems": {
     "method": "GET",
-    "path": "/resourceitemAuthorization:",
+    "path": "/resourceitem",
     "response": [
       "items",
       "result"
@@ -2448,7 +2448,7 @@
   },
   "GetResourceSets": {
     "method": "GET",
-    "path": "/resourcesetAuthorization:",
+    "path": "/resourceset",
     "response": [
       "resourceSets",
       "result"
@@ -2507,7 +2507,7 @@
   },
   "GetTableSettings": {
     "method": "GET",
-    "path": "/tablesettingsAuthorization:",
+    "path": "/tablesettings",
     "response": [
       "tableSettings",
       "result"
