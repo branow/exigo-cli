@@ -19,7 +19,33 @@ Resource-specific commands (`customer`, `order`, etc.) are not yet built —
 see [`docs/DESIGN.md`](docs/DESIGN.md) for why, and what's planned once
 sandbox credentials are available.
 
-## Install / build
+## Install
+
+### Prebuilt binaries
+
+Download the archive for your platform from the
+[latest release](https://github.com/branow/exigo-cli/releases/latest) —
+macOS, Linux, and Windows, both amd64 and arm64 — unpack it, and put the
+`exigo` binary on your `PATH`:
+
+```sh
+tar xzf exigo_*_darwin_arm64.tar.gz   # .zip on Windows
+sudo mv exigo /usr/local/bin/
+```
+
+`checksums.txt` on the release page verifies the download
+(`shasum -c checksums.txt --ignore-missing`).
+
+### With Go
+
+```sh
+go install github.com/branow/exigo-cli@latest
+```
+
+Note that `go install` names the binary `exigo-cli` (after the module);
+rename it to `exigo` if you prefer the short form.
+
+### From source
 
 Requires Go 1.25+.
 
