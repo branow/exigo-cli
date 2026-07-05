@@ -1,0 +1,13 @@
+/research/
+/.tmp/
+*.local
+
+# Go
+/bin/
+/dist/
+*.exe
+*.test
+*.out
+
+# OS
+.DS_Store
