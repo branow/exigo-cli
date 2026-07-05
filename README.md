@@ -89,3 +89,7 @@ go test ./...
 
 No live-API tests exist yet — they're blocked on real Exigo sandbox
 credentials.
+
+## License
+
+[MIT](LICENSE)

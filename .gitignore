@@ -1,19 +1,23 @@
-# Local research and crawl artifacts — the docs crawl, the generated SOAP
-# schema reference, and the scripts that produce them. Only the distilled
-# internal/exigoapi/catalog/rest-catalog.json is committed.
-/research/
-/scripts/
-/api-catalog/
-/docs/exigo-api-catalog.md
-/.tmp/
-*.local
+# Whitelist: ignore everything except what the module is built from.
+# Local artifacts (research/, scripts/, api-catalog/, bin/, .tmp/, ...)
+# are ignored by default instead of each needing its own rule.
+/*
+!/.gitignore
+!/LICENSE
+!/README.md
+!/go.mod
+!/go.sum
+!/main.go
+!/cmd/
+!/internal/
+!/docs/
 
-# Go
-/bin/
-/dist/
-*.exe
+# Local research artifacts living inside whitelisted folders
+/docs/exigo-api-catalog.md
+
+# Junk at any depth
+*.local
 *.test
 *.out
-
-# OS
+*.exe
 .DS_Store
