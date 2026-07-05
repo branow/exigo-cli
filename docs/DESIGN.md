@@ -86,7 +86,16 @@ SOAP, which needed a custom `ApiAuthentication` header. So:
   company, and the REST base URL (default
   `https://<company>-api.exigo.com/3.0` — the API routes per tenant via a
   company-prefixed hostname — overridable per profile for sandbox hosts);
-  stores them under a named profile.
+  stores them under a named profile. Before storing, the credentials are
+  checked with a read-only API call (`GetWarehouses`) so a typo'd
+  password or wrong endpoint fails at login, not on the first real call
+  (`--no-verify` skips this). Only definitive rejections block the login
+  — 401/403 (bad credentials) and 404 (URL does not serve the API);
+  anything the probe cannot interpret (a tenant where the probe operation
+  itself errors, a 5xx, an unreachable host) stores the credentials with
+  a warning. Base URLs must be well-formed http(s) URLs; one missing the
+  `/3.0` version path draws a warning, since that is the usual sign of a
+  web/admin host pasted by mistake.
 - Credentials are stored in the OS keychain (`zalando/go-keyring`) with a
   plaintext-file fallback (0600) when no keychain backend is available,
   clearly warned about at write time.

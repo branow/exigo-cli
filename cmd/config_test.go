@@ -43,6 +43,33 @@ func TestConfigSetDoesNotSwitchActiveProfile(t *testing.T) {
 	}
 }
 
+func TestConfigSetRejectsMalformedBaseURL(t *testing.T) {
+	f, _, _ := newTestFactory(t, "")
+
+	root := cmd.NewRootCmd(f)
+	root.SetArgs([]string{"config", "set", "base-url", "sandbox1.exigo.com/3.0"})
+	err := root.Execute()
+	if err == nil {
+		t.Fatal("expected a validation error for a scheme-less base URL")
+	}
+	if got := cmdutil.ExitCode(err); got != cmdutil.ExitValidation {
+		t.Errorf("got exit code %d, want %d", got, cmdutil.ExitValidation)
+	}
+}
+
+func TestConfigSetWarnsOnUnversionedBaseURL(t *testing.T) {
+	f, _, errOut := newTestFactory(t, "")
+
+	root := cmd.NewRootCmd(f)
+	root.SetArgs([]string{"config", "set", "base-url", "https://sandbox1.exigo.com/"})
+	if err := root.Execute(); err != nil {
+		t.Fatalf("set: %v", err)
+	}
+	if !strings.Contains(errOut.String(), "version path") {
+		t.Errorf("expected a warning about the missing /3.0 version path, got %q", errOut.String())
+	}
+}
+
 func TestConfigSetRejectsInvalidOutputFormat(t *testing.T) {
 	f, _, _ := newTestFactory(t, "")
 
