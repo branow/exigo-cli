@@ -3,6 +3,8 @@
 # are ignored by default instead of each needing its own rule.
 /*
 !/.gitignore
+!/.github/
+!/.goreleaser.yml
 !/LICENSE
 !/README.md
 !/go.mod
