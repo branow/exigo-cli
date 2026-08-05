@@ -22,5 +22,35 @@ archives:
 checksum:
   name_template: checksums.txt
 
+homebrew_casks:
+  - name: exigo
+    repository:
+      owner: branow
+      name: homebrew-tap
+      token: "{{ .Env.TAP_GITHUB_TOKEN }}"
+    directory: Casks
+    homepage: https://github.com/branow/exigo-cli
+    description: Command-line interface for the Exigo direct-selling back-office API
+
+nfpms:
+  - package_name: exigo
+    formats: [deb, rpm, apk]
+    maintainer: Orest Bodnar <branow.code@gmail.com>
+    homepage: https://github.com/branow/exigo-cli
+    description: Command-line interface for the Exigo direct-selling back-office API
+    license: MIT
+    bindir: /usr/bin
+
+scoops:
+  - name: exigo
+    repository:
+      owner: branow
+      name: scoop-bucket
+      token: "{{ .Env.TAP_GITHUB_TOKEN }}"
+    directory: bucket
+    homepage: https://github.com/branow/exigo-cli
+    description: Command-line interface for the Exigo direct-selling back-office API
+    license: MIT
+
 changelog:
   use: git

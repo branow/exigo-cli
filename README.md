@@ -16,8 +16,36 @@ terminal or a script, without writing any integration code.
 
 ## Installation
 
-Download the archive for your platform (macOS, Linux, Windows; amd64 and
-arm64) from the [latest release](https://github.com/branow/exigo-cli/releases/latest),
+**Homebrew** (macOS and Linux):
+
+```sh
+brew install branow/tap/exigo
+```
+
+**Scoop** (Windows):
+
+```powershell
+scoop bucket add branow https://github.com/branow/scoop-bucket
+scoop install exigo
+```
+
+**Linux packages**: `deb`, `rpm`, and `apk` packages are attached to the
+[latest release](https://github.com/branow/exigo-cli/releases/latest), e.g.:
+
+```sh
+sudo dpkg -i exigo_*_linux_amd64.deb
+```
+
+**Shell script** (Linux and macOS; installs to `/usr/local/bin`, or
+`~/.local/bin` when that is not writable):
+
+```sh
+curl -fsSL https://raw.githubusercontent.com/branow/exigo-cli/main/scripts/install.sh | sh
+```
+
+**Manual**: download the archive for your platform (macOS, Linux, Windows;
+amd64 and arm64) from the
+[latest release](https://github.com/branow/exigo-cli/releases/latest),
 unpack it, and put the `exigo` binary on your `PATH`:
 
 ```sh
@@ -25,7 +53,7 @@ tar xzf exigo_*_darwin_arm64.tar.gz   # .zip on Windows
 sudo mv exigo /usr/local/bin/
 ```
 
-Alternatively, with Go 1.25+:
+**Go** 1.25+:
 
 ```sh
 go install github.com/branow/exigo-cli@latest   # installs as "exigo-cli"
