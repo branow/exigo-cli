@@ -53,6 +53,11 @@ tar xzf exigo_*_darwin_arm64.tar.gz   # .zip on Windows
 sudo mv exigo /usr/local/bin/
 ```
 
+On macOS, archives downloaded with a browser are quarantined and
+Gatekeeper will refuse to run the unsigned binary; clear it with
+`xattr -d com.apple.quarantine /usr/local/bin/exigo`. Homebrew and the
+shell script are not affected.
+
 **Go** 1.25+:
 
 ```sh
