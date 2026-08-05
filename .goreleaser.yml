@@ -31,6 +31,15 @@ homebrew_casks:
     directory: Casks
     homepage: https://github.com/branow/exigo-cli
     description: Command-line interface for the Exigo direct-selling back-office API
+    # The binaries are not signed/notarized with an Apple Developer ID, so
+    # strip the quarantine attribute Homebrew puts on cask downloads;
+    # otherwise Gatekeeper refuses to run exigo.
+    hooks:
+      post:
+        install: |
+          if system_command("/usr/bin/xattr", args: ["-h"]).exit_status == 1
+            system_command "/usr/bin/xattr", args: ["-dr", "com.apple.quarantine", "#{staged_path}/exigo"]
+          end
 
 nfpms:
   - package_name: exigo
