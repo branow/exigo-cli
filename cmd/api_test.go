@@ -169,6 +169,133 @@ func TestAPIListPrintsOperationsWithoutCredentials(t *testing.T) {
 	}
 }
 
+func TestAPIDescribePrintsFieldsWithoutCredentials(t *testing.T) {
+	f, out, _ := newTestFactory(t, "")
+	root := cmd.NewRootCmd(f)
+	root.SetArgs([]string{"api", "CreatePaymentCreditCard", "--describe"})
+	if err := root.Execute(); err != nil {
+		t.Fatalf("Execute: %v", err)
+	}
+	got := out.String()
+	for _, want := range []string{
+		"POST /payment/creditcard",
+		"Request (body)",
+		"creditCardNumber", "String", "required", // typed, mandatory field
+		"billingName", "optional", // typed, optional field
+		"Response", "paymentID",
+	} {
+		if !strings.Contains(got, want) {
+			t.Errorf("describe output missing %q, got %q", want, got)
+		}
+	}
+}
+
+func TestAPIDescribeLabelsGetQueryParameters(t *testing.T) {
+	f, out, _ := newTestFactory(t, "")
+	root := cmd.NewRootCmd(f)
+	// Case-insensitive operation names resolve to documented casing.
+	root.SetArgs([]string{"api", "getcustomers", "--describe"})
+	if err := root.Execute(); err != nil {
+		t.Fatalf("Execute: %v", err)
+	}
+	got := out.String()
+	if !strings.HasPrefix(got, "GetCustomers\n") {
+		t.Errorf("want output to start with canonical name GetCustomers, got %q", got)
+	}
+	if !strings.Contains(got, "Request (query)") || strings.Contains(got, "Request (body)") {
+		t.Errorf("want a GET operation described with a query request section, got %q", got)
+	}
+}
+
+func TestAPIDescribeExpandsNestedTypes(t *testing.T) {
+	f, out, _ := newTestFactory(t, "")
+	root := cmd.NewRootCmd(f)
+	root.SetArgs([]string{"api", "CreateOrder", "--describe"})
+	if err := root.Execute(); err != nil {
+		t.Fatalf("Execute: %v", err)
+	}
+	got := out.String()
+	// The details field is an array of OrderDetailRequest; its fields must
+	// be expanded inline, indented under it.
+	if !strings.Contains(got, "details") || !strings.Contains(got, "OrderDetailRequest[]") {
+		t.Fatalf("expected a details OrderDetailRequest[] field, got %q", got)
+	}
+	for _, nested := range []string{"itemCode", "quantity"} {
+		if !strings.Contains(got, nested) {
+			t.Errorf("expected expanded nested field %q from OrderDetailRequest, got %q", nested, got)
+		}
+	}
+}
+
+func TestAPIDescribeJSON(t *testing.T) {
+	f, out, _ := newTestFactory(t, "")
+	root := cmd.NewRootCmd(f)
+	root.SetArgs([]string{"-o", "json", "api", "SetAccountCreditCardToken", "--describe"})
+	if err := root.Execute(); err != nil {
+		t.Fatalf("Execute: %v", err)
+	}
+	var view map[string]any
+	if err := json.Unmarshal(out.Bytes(), &view); err != nil {
+		t.Fatalf("describe -o json is not valid JSON: %v", err)
+	}
+	if view["operation"] != "SetAccountCreditCardToken" || view["method"] != "PUT" {
+		t.Errorf("got operation=%v method=%v, want SetAccountCreditCardToken/PUT", view["operation"], view["method"])
+	}
+	body, ok := view["body"].([]any)
+	if !ok || len(body) == 0 {
+		t.Fatalf("want a non-empty body field list in %v", view)
+	}
+	first, ok := body[0].(map[string]any)
+	if !ok || first["name"] != "customerID" || first["type"] != "Int32" || first["required"] != true {
+		t.Errorf("first body field = %v, want {name:customerID type:Int32 required:true}", body[0])
+	}
+}
+
+func TestAPIDescribeJSONIncludesReferencedTypes(t *testing.T) {
+	f, out, _ := newTestFactory(t, "")
+	root := cmd.NewRootCmd(f)
+	root.SetArgs([]string{"-o", "json", "api", "CreateOrder", "--describe"})
+	if err := root.Execute(); err != nil {
+		t.Fatalf("Execute: %v", err)
+	}
+	var view struct {
+		Types map[string][]map[string]any `json:"types"`
+	}
+	if err := json.Unmarshal(out.Bytes(), &view); err != nil {
+		t.Fatalf("describe -o json is not valid JSON: %v", err)
+	}
+	def, ok := view.Types["OrderDetailRequest"]
+	if !ok || len(def) == 0 {
+		t.Fatalf("want a non-empty OrderDetailRequest definition in types, got %v", view.Types)
+	}
+}
+
+func TestAPIDescribeRejectsFieldCombination(t *testing.T) {
+	f, _, _ := newTestFactory(t, "")
+	root := cmd.NewRootCmd(f)
+	root.SetArgs([]string{"api", "GetCustomers", "--describe", "-f", "customerID=1"})
+	err := root.Execute()
+	if err == nil {
+		t.Fatal("expected a validation error for --describe with --field")
+	}
+	if got := cmdutil.ExitCode(err); got != cmdutil.ExitValidation {
+		t.Errorf("got exit code %d, want %d", got, cmdutil.ExitValidation)
+	}
+}
+
+func TestAPIDescribeUnknownOperation(t *testing.T) {
+	f, _, _ := newTestFactory(t, "")
+	root := cmd.NewRootCmd(f)
+	root.SetArgs([]string{"api", "NotAnOperation", "--describe"})
+	err := root.Execute()
+	if err == nil {
+		t.Fatal("expected an error describing an uncatalogued operation")
+	}
+	if got := cmdutil.ExitCode(err); got != cmdutil.ExitValidation {
+		t.Errorf("got exit code %d, want %d", got, cmdutil.ExitValidation)
+	}
+}
+
 func TestAPIRejectsInvalidOutputFlag(t *testing.T) {
 	f, _, _ := newTestFactory(t, "")
 	root := cmd.NewRootCmd(f)

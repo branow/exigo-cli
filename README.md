@@ -87,10 +87,42 @@ login prompt or with `--base-url`.
 
 ```sh
 exigo api --list                        # all 252 operation names
+exigo api CreatePaymentCreditCard --describe   # its method, path, and fields
 exigo api GetCustomers -f customerID=42
 exigo api CreateCustomer -f firstName=Jane -f lastName=Doe -f email=jane@example.com
 exigo api CreateOrder --input order.json
 ```
+
+`--describe` fully documents an operation — HTTP method, path, and its
+request and response fields, each with its type and (for request fields)
+whether it is required, with nested complex types expanded inline. No
+credentials or network needed, so you know what to pass instead of guessing:
+
+```
+$ exigo api CreateOrder --describe
+CreateOrder
+  POST /orders
+
+  Request (body):
+    customerID  Int32                 required
+    orderDate   DateTime              required
+    ...
+    details     OrderDetailRequest[]  required
+      itemCode          String   optional
+      quantity          Decimal  required
+      priceEachOverride Decimal  optional
+      ...
+
+  Response:
+    orderID     Int32
+    total       Decimal
+    ...
+    result      ApiResponse
+```
+
+Add `-o json` for a machine-readable shape: each field is
+`{name, type, required}`, with a top-level `types` map defining every
+complex type the fields reference.
 
 The operation name (case-insensitive) routes to its documented REST
 endpoint: `-f key=value` fields become query parameters for GET operations
