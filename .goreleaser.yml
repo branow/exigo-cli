@@ -34,12 +34,15 @@ homebrew_casks:
     # The binaries are not signed/notarized with an Apple Developer ID, so
     # strip the quarantine attribute Homebrew puts on cask downloads;
     # otherwise Gatekeeper refuses to run exigo.
-    hooks:
-      post:
-        install: |
-          if File.executable?("/usr/bin/xattr")
-            system_command "/usr/bin/xattr", args: ["-dr", "com.apple.quarantine", "#{staged_path}/exigo"]
-          end
+    # Written as a custom_block because goreleaser's `hooks` still render the
+    # `postflight do` stanza that Homebrew deprecated in favour of
+    # `postflight_steps` (goreleaser/goreleaser#6870).
+    custom_block: |
+      postflight_steps do
+        if_path_exists "/usr/bin/xattr" do
+          run "/usr/bin/xattr", args: ["-dr", "com.apple.quarantine", "{{staged_path}}/exigo"]
+        end
+      end
 
 nfpms:
   - package_name: exigo
