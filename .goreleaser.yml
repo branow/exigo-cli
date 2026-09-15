@@ -40,7 +40,7 @@ homebrew_casks:
     custom_block: |
       postflight_steps do
         if_path_exists "/usr/bin/xattr" do
-          run "/usr/bin/xattr", args: ["-dr", "com.apple.quarantine", "{{staged_path}}/exigo"]
+          run "/usr/bin/xattr", args: ["-dr", "com.apple.quarantine", "#{staged_path}/exigo"]
         end
       end
 
