@@ -37,10 +37,17 @@ homebrew_casks:
     # Written as a custom_block because goreleaser's `hooks` still render the
     # `postflight do` stanza that Homebrew deprecated in favour of
     # `postflight_steps` (goreleaser/goreleaser#6870).
+    #
+    # Inside postflight_steps the paths are declarative template tokens the
+    # installer expands, NOT Ruby: `#{staged_path}` is interpolated at
+    # cask-load time against a DSL that has no such method, which makes the
+    # whole cask unreadable. The literal {{staged_path}} is what Homebrew
+    # expands, wrapped in a goreleaser template string so goreleaser's own
+    # {{...}} pass leaves it alone instead of failing on an unknown function.
     custom_block: |
       postflight_steps do
         if_path_exists "/usr/bin/xattr" do
-          run "/usr/bin/xattr", args: ["-dr", "com.apple.quarantine", "#{staged_path}/exigo"]
+          run "/usr/bin/xattr", args: ["-dr", "com.apple.quarantine", "{{ "{{staged_path}}" }}/exigo"]
         end
       end
 
