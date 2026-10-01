@@ -9,11 +9,13 @@ import (
 	"testing"
 
 	"github.com/branow/exigo-cli/internal/iostreams"
+	"github.com/branow/gokey"
 )
 
-// fakeKeychain stands in for the OS keychain: a map, plus an error every
-// operation returns instead of touching it. That is what drives the
-// fallback and authorization branches with no real keychain present.
+// fakeKeychain stands in for the OS credential store: a map, plus an
+// error every operation returns instead of touching it. That is what
+// drives the fallback and authorization branches with no real keychain
+// present.
 type fakeKeychain struct {
 	items map[string]string
 	err   error
@@ -23,18 +25,18 @@ func newFakeKeychain() *fakeKeychain {
 	return &fakeKeychain{items: map[string]string{}}
 }
 
-func (k *fakeKeychain) get(_, account string, _ ui) (string, error) {
+func (k *fakeKeychain) get(_, account string, _ ...gokey.Option) (string, error) {
 	if k.err != nil {
 		return "", k.err
 	}
 	value, ok := k.items[account]
 	if !ok {
-		return "", errMissing
+		return "", gokey.ErrNotFound
 	}
 	return value, nil
 }
 
-func (k *fakeKeychain) set(_, account, secret string, _ ui) error {
+func (k *fakeKeychain) set(_, account, secret string, _ ...gokey.Option) error {
 	if k.err != nil {
 		return k.err
 	}
@@ -42,12 +44,12 @@ func (k *fakeKeychain) set(_, account, secret string, _ ui) error {
 	return nil
 }
 
-func (k *fakeKeychain) remove(_, account string, _ ui) error {
+func (k *fakeKeychain) remove(_, account string, _ ...gokey.Option) error {
 	if k.err != nil {
 		return k.err
 	}
 	if _, ok := k.items[account]; !ok {
-		return errMissing
+		return gokey.ErrNotFound
 	}
 	delete(k.items, account)
 	return nil
@@ -121,7 +123,7 @@ func TestKeyringGetReportsNotFoundWhenNeitherStoreHasEntry(t *testing.T) {
 
 func TestKeyringSetFallsBackToPlaintextWhenKeychainIsUnavailable(t *testing.T) {
 	keychain := newFakeKeychain()
-	keychain.err = errors.New("no backend")
+	keychain.err = fmt.Errorf("%w: no D-Bus session bus", gokey.ErrUnavailable)
 	store, path, errOut := newTestStore(t, keychain)
 
 	want := Credentials{LoginName: "alice", Password: "s3cret", Company: "ACME"}
@@ -140,12 +142,41 @@ func TestKeyringSetFallsBackToPlaintextWhenKeychainIsUnavailable(t *testing.T) {
 	}
 }
 
+// A keychain that is present but fails for an unexplained reason is not
+// an absent one: writing the secret to a plaintext file instead would
+// quietly downgrade where it lives, so the failure surfaces.
+func TestKeyringReportsUnexpectedKeychainFailures(t *testing.T) {
+	keychain := newFakeKeychain()
+	keychain.err = errors.New("the keychain is sulking")
+	store, path, errOut := newTestStore(t, keychain)
+
+	creds := Credentials{LoginName: "alice", Password: "s3cret", Company: "ACME"}
+	operations := map[string]func() error{
+		"Get":    func() error { _, err := store.Get("default"); return err },
+		"Set":    func() error { return store.Set("default", creds) },
+		"Delete": func() error { return store.Delete("default") },
+	}
+	for name, operation := range operations {
+		t.Run(name, func(t *testing.T) {
+			if err := operation(); !errors.Is(err, keychain.err) {
+				t.Fatalf("error = %v, want the keychain failure", err)
+			}
+		})
+	}
+	if _, err := NewPlaintextStore(path).Get("default"); !errors.Is(err, ErrNotFound) {
+		t.Errorf("plaintext fallback error = %v, want ErrNotFound", err)
+	}
+	if errOut.Len() != 0 {
+		t.Errorf("stderr = %q, want no fallback warning", errOut.String())
+	}
+}
+
 // An entry the keychain holds but will not release is neither a missing
 // entry nor an unavailable keychain: silently reading the plaintext file
 // instead would hide it, so every operation reports it with its remedy.
 func TestKeyringReportsBlockedEntryWithItsRemedy(t *testing.T) {
 	keychain := newFakeKeychain()
-	keychain.err = fmt.Errorf("%w (OSStatus -25308)", errBlocked)
+	keychain.err = fmt.Errorf("%w (OSStatus -25308)", gokey.ErrBlocked)
 	store, path, _ := newTestStore(t, keychain)
 
 	seeded := Credentials{LoginName: "alice", Password: "s3cret", Company: "ACME"}

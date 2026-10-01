@@ -6,58 +6,60 @@ import (
 	"fmt"
 
 	"github.com/branow/exigo-cli/internal/iostreams"
+	"github.com/branow/gokey"
 )
 
 const keyringService = "exigo-cli"
 
-// KeyringStore persists credentials in the OS keychain, falling back to a
-// plaintext file and warning on stderr when no keychain backend is
-// available.
+// KeyringStore persists credentials in the OS credential store, falling
+// back to a plaintext file and warning on stderr when the machine has
+// none.
 type KeyringStore struct {
 	streams  *iostreams.IOStreams
 	fallback *PlaintextStore
 
-	// The keychain operations are fields so tests drive every branch
+	// prompt carries whether a call may raise the OS authorization
+	// dialog. It is decided once, where the terminal is known.
+	prompt gokey.Option
+
+	// The credential store calls are fields so tests drive every branch
 	// without touching the machine's real keychain.
-	ui     ui
-	get    func(service, account string, allow ui) (string, error)
-	set    func(service, account, secret string, allow ui) error
-	remove func(service, account string, allow ui) error
+	get    func(service, account string, opts ...gokey.Option) (string, error)
+	set    func(service, account, secret string, opts ...gokey.Option) error
+	remove func(service, account string, opts ...gokey.Option) error
 }
 
 // NewKeyringStore returns a KeyringStore that warns via streams and falls
-// back to fallbackPath when the OS keychain is unavailable. The keychain
-// may raise its authorization dialog only when a human is watching the
-// terminal: unattended, a dialog nobody can see would hang the command
-// instead of failing it.
+// back to fallbackPath when the machine has no OS credential store. The
+// keychain may raise its authorization dialog only when a human is
+// watching the terminal: unattended, a dialog nobody can see would hang
+// the command instead of failing it.
 func NewKeyringStore(streams *iostreams.IOStreams, fallbackPath string) *KeyringStore {
-	allow := noUI
-	if streams.CanPrompt() {
-		allow = allowUI
-	}
 	return &KeyringStore{
 		streams:  streams,
 		fallback: NewPlaintextStore(fallbackPath),
-		ui:       allow,
-		get:      itemGet,
-		set:      itemSet,
-		remove:   itemDelete,
+		prompt:   gokey.WithPrompt(streams.CanPrompt()),
+		get:      gokey.Get,
+		set:      gokey.Set,
+		remove:   gokey.Delete,
 	}
 }
 
 // Get returns the stored credentials for profile. A profile absent from
-// the keychain is also looked up in the plaintext fallback — its entry may
-// have been written there while the keychain was unavailable.
+// the credential store is also looked up in the plaintext fallback — its
+// entry may have been written there while no store was available.
 func (s *KeyringStore) Get(profile string) (Credentials, error) {
-	value, err := s.get(keyringService, profile, s.ui)
+	value, err := s.get(keyringService, profile, s.prompt)
 	switch {
-	case errors.Is(err, errMissing):
+	case errors.Is(err, gokey.ErrNotFound):
 		return s.fallback.Get(profile)
-	case errors.Is(err, errBlocked):
+	case errors.Is(err, gokey.ErrBlocked):
 		return Credentials{}, blockedError("read", profile, err)
-	case err != nil:
+	case errors.Is(err, gokey.ErrUnavailable):
 		s.warnFallback(err)
 		return s.fallback.Get(profile)
+	case err != nil:
+		return Credentials{}, err
 	}
 	return decodeCredentials(value)
 }
@@ -68,27 +70,31 @@ func (s *KeyringStore) Set(profile string, creds Credentials) error {
 	if err != nil {
 		return err
 	}
-	switch err := s.set(keyringService, profile, value, s.ui); {
-	case errors.Is(err, errBlocked):
+	switch err := s.set(keyringService, profile, value, s.prompt); {
+	case errors.Is(err, gokey.ErrBlocked):
 		return blockedError("replace", profile, err)
-	case err != nil:
+	case errors.Is(err, gokey.ErrUnavailable):
 		s.warnFallback(err)
 		return s.fallback.Set(profile, creds)
+	case err != nil:
+		return err
 	}
 	return nil
 }
 
 // Delete removes the stored credentials for profile, from the plaintext
-// fallback when the keychain has no entry (see Get).
+// fallback when the credential store has no entry (see Get).
 func (s *KeyringStore) Delete(profile string) error {
-	switch err := s.remove(keyringService, profile, s.ui); {
-	case errors.Is(err, errMissing):
+	switch err := s.remove(keyringService, profile, s.prompt); {
+	case errors.Is(err, gokey.ErrNotFound):
 		return s.fallback.Delete(profile)
-	case errors.Is(err, errBlocked):
+	case errors.Is(err, gokey.ErrBlocked):
 		return blockedError("delete", profile, err)
-	case err != nil:
+	case errors.Is(err, gokey.ErrUnavailable):
 		s.warnFallback(err)
 		return s.fallback.Delete(profile)
+	case err != nil:
+		return err
 	}
 	return nil
 }

@@ -96,16 +96,21 @@ SOAP, which needed a custom `ApiAuthentication` header. So:
   a warning. Base URLs must be well-formed http(s) URLs; one missing the
   `/3.0` version path draws a warning, since that is the usual sign of a
   web/admin host pasted by mistake.
-- Credentials are stored in the OS keychain with a plaintext-file
-  fallback (0600) when no keychain backend is available, clearly warned
-  about at write time. On macOS the Security framework is called directly
-  — loaded at run time with `ebitengine/purego`, so no cgo and no loss of
-  cross-compilation — because `zalando/go-keyring` shells out to
-  `/usr/bin/security` there and the item's access control then names that
-  tool rather than this binary, leaving the secret readable by any process
-  running as the user. Elsewhere (Windows Credential Manager, Linux Secret
-  Service) `go-keyring` still backs the store. The keychain may raise its
-  authorization dialog only when a human is watching the terminal; an
+- Credentials are stored in the OS keychain through `branow/gokey`, which
+  is this CLI's own keychain layer extracted so other tools can share it:
+  macOS Keychain via the Security framework called directly (loaded at run
+  time with `ebitengine/purego`, so no cgo and no loss of
+  cross-compilation), Windows Credential Manager, Linux Secret Service.
+  Calling the framework rather than shelling out to `/usr/bin/security`
+  is what keeps the item's access control naming this binary instead of
+  that tool, which would leave the secret readable by any process running
+  as the user. `internal/credentials` keeps the policy around it: the
+  plaintext-file fallback (0600) when `gokey` reports no credential store
+  on the machine, clearly warned about at write time, and the remedy
+  message for an entry the keychain refuses to release. A keychain that is
+  present but fails for some other reason surfaces that failure rather
+  than silently moving the secret to a plain file. The authorization
+  dialog is allowed only when a human is watching the terminal; an
   unattended run fails with the remedy instead of hanging on a dialog
   nobody can see.
 - Entries written by the `go-keyring` versions carry the permissive access
@@ -182,11 +187,11 @@ made; everything else is exit 1.
 
 - `internal/config`, `internal/exigoapi`, `internal/output`: unit tests,
   no network — `exigoapi` tests use `httptest.Server`.
-- `internal/credentials`: the keychain operations are struct fields, so
-  the fallback and authorization branches are driven by an in-memory
-  stand-in — `go test ./...` never touches a real keychain. The macOS
-  round trip against the live Security framework is behind both the
-  `keychain` build tag and `EXIGO_KEYCHAIN_TEST=1`.
+- `internal/credentials`: the `gokey` calls are struct fields, so the
+  fallback and authorization branches are driven by an in-memory stand-in
+  — `go test ./...` never touches a real keychain. The round trip against
+  the live OS credential store lives in `gokey` itself, behind its
+  `integration` build tag.
 - `cmd/`: Cobra command tests via `Execute()` with `SetArgs`/`SetOut` and a
   fake `cmdutil.Factory` pointed at an `httptest.Server`.
 - No live-API or end-to-end tests against real Exigo infrastructure — that
