@@ -3,6 +3,7 @@ module github.com/branow/exigo-cli
 go 1.25.0
 
 require (
+	github.com/ebitengine/purego v0.11.1
 	github.com/spf13/cobra v1.10.2
 	github.com/zalando/go-keyring v0.2.8
 	golang.org/x/term v0.44.0

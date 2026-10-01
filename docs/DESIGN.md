@@ -96,9 +96,22 @@ SOAP, which needed a custom `ApiAuthentication` header. So:
   a warning. Base URLs must be well-formed http(s) URLs; one missing the
   `/3.0` version path draws a warning, since that is the usual sign of a
   web/admin host pasted by mistake.
-- Credentials are stored in the OS keychain (`zalando/go-keyring`) with a
-  plaintext-file fallback (0600) when no keychain backend is available,
-  clearly warned about at write time.
+- Credentials are stored in the OS keychain with a plaintext-file
+  fallback (0600) when no keychain backend is available, clearly warned
+  about at write time. On macOS the Security framework is called directly
+  — loaded at run time with `ebitengine/purego`, so no cgo and no loss of
+  cross-compilation — because `zalando/go-keyring` shells out to
+  `/usr/bin/security` there and the item's access control then names that
+  tool rather than this binary, leaving the secret readable by any process
+  running as the user. Elsewhere (Windows Credential Manager, Linux Secret
+  Service) `go-keyring` still backs the store. The keychain may raise its
+  authorization dialog only when a human is watching the terminal; an
+  unattended run fails with the remedy instead of hanging on a dialog
+  nobody can see.
+- Entries written by the `go-keyring` versions carry the permissive access
+  control and cannot be tightened in place: a write replaces the item
+  (delete, then add) rather than updating it, so the first `auth login`
+  after the upgrade rewrites the entry under this binary's own identity.
 - Preferences (current profile, output format, base URL) live in
   `~/.config/exigo/config.yml` (`%AppData%\exigo\config.yml` on Windows);
   secrets never enter that file.
@@ -169,8 +182,11 @@ made; everything else is exit 1.
 
 - `internal/config`, `internal/exigoapi`, `internal/output`: unit tests,
   no network — `exigoapi` tests use `httptest.Server`.
-- `internal/credentials`: tests against the plaintext fallback (an
-  interface swap, not a real OS keychain in CI).
+- `internal/credentials`: the keychain operations are struct fields, so
+  the fallback and authorization branches are driven by an in-memory
+  stand-in — `go test ./...` never touches a real keychain. The macOS
+  round trip against the live Security framework is behind both the
+  `keychain` build tag and `EXIGO_KEYCHAIN_TEST=1`.
 - `cmd/`: Cobra command tests via `Execute()` with `SetArgs`/`SetOut` and a
   fake `cmdutil.Factory` pointed at an `httptest.Server`.
 - No live-API or end-to-end tests against real Exigo infrastructure — that

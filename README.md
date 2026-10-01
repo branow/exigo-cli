@@ -8,7 +8,10 @@ direct-selling back-office REST API.
 terminal or a script, without writing any integration code.
 
 - Credentials are stored in the OS keychain (macOS Keychain, Windows
-  Credential Manager, Linux Secret Service), never in plain files.
+  Credential Manager, Linux Secret Service), never in plain files. On
+  macOS the entry is written through the Security framework directly, so
+  its access control names `exigo` and other processes cannot read the
+  secret without your approval.
 - Named profiles switch between tenants and environments (production,
   sandbox).
 - JSON output, meaningful exit codes, and non-interactive flags make it
