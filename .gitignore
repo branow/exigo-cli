@@ -16,6 +16,7 @@
 !/scripts/
 /scripts/*
 !/scripts/install.sh
+!/scripts/sign.sh
 
 # Local research artifacts living inside whitelisted folders
 /docs/exigo-api-catalog.md

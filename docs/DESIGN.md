@@ -114,9 +114,26 @@ SOAP, which needed a custom `ApiAuthentication` header. So:
   unattended run fails with the remedy instead of hanging on a dialog
   nobody can see.
 - Entries written by the `go-keyring` versions carry the permissive access
-  control and cannot be tightened in place: a write replaces the item
-  (delete, then add) rather than updating it, so the first `auth login`
-  after the upgrade rewrites the entry under this binary's own identity.
+  control, are owned by `/usr/bin/security`, and store the value as
+  `go-keyring-base64:<base64>` (`go-keyring-encoded:<hex>` before v0.2).
+  The first read after the user approves the dialog decodes that layout
+  and stores the value again as plain JSON. The keychain refuses to let
+  this binary replace an item another program owns (OSStatus -25244), so
+  on exactly that refusal the old item is deleted through
+  `/usr/bin/security` (delete only, no secret passes through it) and added
+  again under this binary's own identity. `auth login` over an old entry
+  takes the same path. A rewrite that still fails is a warning, not an
+  error: the read succeeds and the dialog keeps coming back.
+- Every read is silent first. Only when the keychain refuses it, and a
+  terminal can show the dialog, is it repeated with the dialog allowed; an
+  entry released that way belongs to another build and is stored again by
+  this one, so the next run is silent.
+- Release darwin binaries are signed with a self-signed release
+  certificate (`scripts/sign.sh`, run by goreleaser on a macOS runner).
+  That keeps the item's access list valid across upgrades. Without an
+  Apple Team ID macOS still partitions the item by cdhash, so the first
+  read after each upgrade asks once per profile, and the re-save above
+  makes it once.
 - Preferences (current profile, output format, base URL) live in
   `~/.config/exigo/config.yml` (`%AppData%\exigo\config.yml` on Windows);
   secrets never enter that file.
