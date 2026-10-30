@@ -3,12 +3,30 @@ version: 2
 project_name: exigo
 
 builds:
-  - main: .
+  - id: unix
+    main: .
     binary: exigo
     env:
       - CGO_ENABLED=0
-    goos: [linux, darwin, windows]
+    goos: [linux, windows]
     goarch: [amd64, arm64]
+    ldflags:
+      - -s -w -X github.com/branow/exigo-cli/cmd.version={{.Version}}
+
+  - id: macos
+    main: .
+    binary: exigo
+    env:
+      - CGO_ENABLED=0
+    goos: [darwin]
+    goarch: [amd64, arm64]
+    # Signed with the release certificate; see scripts/sign.sh for what it
+    # does and does not keep across upgrades. codesign needs macOS, so the
+    # release runs on a macOS runner.
+    hooks:
+      post:
+        - cmd: ./scripts/sign.sh "{{ .Path }}"
+          output: true
     ldflags:
       - -s -w -X github.com/branow/exigo-cli/cmd.version={{.Version}}
 
@@ -31,9 +49,9 @@ homebrew_casks:
     directory: Casks
     homepage: https://github.com/branow/exigo-cli
     description: Command-line interface for the Exigo direct-selling back-office API
-    # The binaries are not signed/notarized with an Apple Developer ID, so
-    # strip the quarantine attribute Homebrew puts on cask downloads;
-    # otherwise Gatekeeper refuses to run exigo.
+    # The binaries are signed with a self-signed certificate, not notarized
+    # with an Apple Developer ID, so strip the quarantine attribute Homebrew
+    # puts on cask downloads; otherwise Gatekeeper refuses to run exigo.
     # Written as a custom_block because goreleaser's `hooks` still render the
     # `postflight do` stanza that Homebrew deprecated in favour of
     # `postflight_steps` (goreleaser/goreleaser#6870).
@@ -53,6 +71,7 @@ homebrew_casks:
 
 nfpms:
   - package_name: exigo
+    ids: [unix]
     formats: [deb, rpm, apk]
     maintainer: Orest Bodnar <branow.code@gmail.com>
     homepage: https://github.com/branow/exigo-cli
