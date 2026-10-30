@@ -4,6 +4,8 @@ import (
 	"fmt"
 	"testing"
 
+	"github.com/branow/gokey"
+
 	"github.com/branow/exigo-cli/internal/cmdutil"
 	"github.com/branow/exigo-cli/internal/exigoapi"
 )
@@ -18,6 +20,7 @@ func TestExitCode(t *testing.T) {
 		{"generic", fmt.Errorf("boom"), cmdutil.ExitError},
 		{"cancelled", cmdutil.ErrCancelled, cmdutil.ExitCancelled},
 		{"not logged in", cmdutil.ErrNotLoggedIn, cmdutil.ExitAuth},
+		{"keychain entry blocked", fmt.Errorf("cannot read the keychain entry: %w", gokey.ErrBlocked), cmdutil.ExitAuth},
 		{"validation", &cmdutil.ValidationError{Message: "bad flag"}, cmdutil.ExitValidation},
 		{"http 401", &exigoapi.HTTPError{StatusCode: 401, Message: "Invalid credentials"}, cmdutil.ExitAuth},
 		{"http 403", &exigoapi.HTTPError{StatusCode: 403, Message: "Forbidden"}, cmdutil.ExitAuth},

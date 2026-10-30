@@ -4,6 +4,8 @@ import (
 	"errors"
 	"strings"
 
+	"github.com/branow/gokey"
+
 	"github.com/branow/exigo-cli/internal/exigoapi"
 )
 
@@ -28,7 +30,9 @@ func ExitCode(err error) int {
 	if errors.Is(err, ErrCancelled) {
 		return ExitCancelled
 	}
-	if errors.Is(err, ErrNotLoggedIn) {
+	// A keychain entry this binary may not read yet is an auth failure too:
+	// the stored login exists, and a person has to approve its use.
+	if errors.Is(err, ErrNotLoggedIn) || errors.Is(err, gokey.ErrBlocked) {
 		return ExitAuth
 	}
 	var validationErr *ValidationError
