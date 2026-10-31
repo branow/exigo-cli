@@ -1,9 +1,12 @@
 package cmd
 
 import (
+	"errors"
+
 	"github.com/spf13/cobra"
 
 	"github.com/branow/exigo-cli/internal/cmdutil"
+	"github.com/branow/exigo-cli/internal/credentials"
 	"github.com/branow/exigo-cli/internal/output"
 )
 
@@ -24,9 +27,14 @@ func newAuthStatusCmd(f *cmdutil.Factory) *cobra.Command {
 
 func runAuthStatus(f *cmdutil.Factory) error {
 	profile := f.ActiveProfile()
+	// Only a missing entry means "not logged in": a keychain that holds
+	// the entry but will not release it says how to fix that instead.
 	creds, err := f.CredentialsStore.Get(profile)
-	if err != nil {
+	if errors.Is(err, credentials.ErrNotFound) {
 		return cmdutil.ErrNotLoggedIn
+	}
+	if err != nil {
+		return err
 	}
 	baseURL := f.Config.BaseURL("", profile)
 

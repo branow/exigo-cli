@@ -1,10 +1,14 @@
 package cmd_test
 
 import (
+	"errors"
+	"fmt"
 	"net/http"
 	"net/http/httptest"
 	"strings"
 	"testing"
+
+	"github.com/branow/gokey"
 
 	"github.com/branow/exigo-cli/cmd"
 	"github.com/branow/exigo-cli/internal/cmdutil"
@@ -189,5 +193,35 @@ func TestAuthSwitchRequiresExistingProfile(t *testing.T) {
 	}
 	if got := cmdutil.ExitCode(err); got != cmdutil.ExitValidation {
 		t.Errorf("got exit code %d, want %d", got, cmdutil.ExitValidation)
+	}
+}
+
+// blockedStore holds an entry the keychain will not release, as an entry
+// stored by another build of the CLI looks to an unattended run.
+type blockedStore struct{ *credentials.FakeStore }
+
+var errBlocked = fmt.Errorf("cannot read the keychain entry: %w; approve the keychain prompt on an interactive terminal", gokey.ErrBlocked)
+
+func (blockedStore) Get(string) (credentials.Credentials, error) {
+	return credentials.Credentials{}, errBlocked
+}
+
+// A blocked entry is not a missing one: "not logged in" would send the
+// user to log in again instead of approving the dialog.
+func TestAuthStatusReportsBlockedKeychainEntryWithItsRemedy(t *testing.T) {
+	f, _, _ := newTestFactory(t, "")
+	f.CredentialsStore = blockedStore{credentials.NewFakeStore()}
+
+	root := cmd.NewRootCmd(f)
+	root.SetArgs([]string{"auth", "status"})
+	err := root.Execute()
+	if !errors.Is(err, gokey.ErrBlocked) {
+		t.Fatalf("error = %v, want the blocked keychain error", err)
+	}
+	if errors.Is(err, cmdutil.ErrNotLoggedIn) {
+		t.Errorf("error = %v, reported as not logged in", err)
+	}
+	if got := cmdutil.ExitCode(err); got != cmdutil.ExitAuth {
+		t.Errorf("got exit code %d, want %d", got, cmdutil.ExitAuth)
 	}
 }

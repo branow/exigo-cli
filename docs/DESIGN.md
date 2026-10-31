@@ -192,7 +192,7 @@ as an interface so they're testable without a network call.
 | 1 | Generic/unexpected failure, incl. business errors reported by a completed call |
 | 2 | User cancelled (aborted a confirmation prompt) |
 | 3 | Validation error (bad flags/args, unknown operation, or an operation with no REST binding — caught before any API call) |
-| 4 | Authentication/authorization failure (not logged in, HTTP 401/403) |
+| 4 | Authentication/authorization failure (not logged in, keychain entry awaiting approval, HTTP 401/403) |
 | 5 | Resource not found (HTTP 404, or a business error mentioning "not found") |
 | 6 | Rate-limited/unavailable (HTTP 429, or 429/5xx after retries exhausted) |
 

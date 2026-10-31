@@ -164,7 +164,7 @@ echo "$EXIGO_PASSWORD" | exigo auth login --login-name svc --company ACME --pass
 | 1 | generic failure, including business errors reported by the API |
 | 2 | cancelled by the user |
 | 3 | validation error (bad flags, unknown operation) |
-| 4 | authentication failure (not logged in, HTTP 401/403) |
+| 4 | authentication failure (not logged in, keychain entry awaiting approval, HTTP 401/403) |
 | 5 | not found (HTTP 404) |
 | 6 | rate-limited or unavailable (HTTP 429, 5xx after retries) |
 
